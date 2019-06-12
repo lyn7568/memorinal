@@ -25,7 +25,7 @@
         <el-table :data="list" style="width: 100%">
             <el-table-column prop="id" label="缴费id" with="450"></el-table-column>
             <el-table-column prop="typename" label="缴费类型" with="50"></el-table-column>
-            <el-table-column prop="paycount" label="缴费钱数" with="50"></el-table-column>
+            <el-table-column prop="paycount" label="缴费金额" with="50"></el-table-column>
             <el-table-column prop="payusername" label="缴费人姓名" with="50"></el-table-column>
             <el-table-column prop="createtime" label="缴费时间" with="280"></el-table-column>
             <el-table-column prop="remark" label="缴费备注" with="180"></el-table-column>
@@ -39,7 +39,7 @@
 
         <el-pagination @size-change="currentPageSize" @current-change="search"
                     :current-page.sync="page" :page-sizes="[5, 10, 20, 30]"
-                    :page-size="size" layout="sizes, prev, pager, next" :total="total">
+                    :page-size="size" layout="total, sizes, prev, pager, next" :total="total">
         </el-pagination>
 
         <el-dialog title="新增缴费" :visible.sync="dialogFormVisible">
@@ -68,7 +68,7 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="缴费数量" >
+            <el-form-item label="缴费金额" >
                 <el-input v-model="pojo.paycount" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="备注" >
@@ -100,7 +100,7 @@ export default {
             pojo:{},
             id:null,
             page:1,
-            size:5,
+            size:10,
             total:0,
             sumCount:null
         }

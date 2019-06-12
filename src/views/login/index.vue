@@ -36,28 +36,43 @@ import { isvalidUsername } from '@/utils/validate'
 export default {
   name: 'login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
-      } else {
+    var validPhone = (rule, value, callback) => {
+      const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+      if (value === 'admin') {
         callback()
       }
-    }
-    const validatePass = (rule, value, callback) => {
-      if (value.length < 5) {
-        callback(new Error('密码不能小于5位'))
+      if (!value) {
+        callback(new Error('请输入您的账号'))
       } else {
-        callback()
+        if (!reg.test(value)) {
+          callback(new Error('请输入正确的手机号码'))
+        } else {
+          this.$http.get(checkRegister, { account: value }, function(response) {
+            if (response.success) {
+              if (response.data === -1) {
+                callback(new Error('该账号已停用，请联系管理员'))
+              } else if (response.data === 1) {
+                callback(new Error('该账号不存在，请检查后重试'))
+              } else if (response.data === 0) {
+                callback()
+              }
+            }
+          })
+        }
       }
     }
     return {
+      falg: false,
       loginForm: {
-        username: 'admin',
-        password: 'yunquyuan'
+        username: '',
+        password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePass }]
+        username: [{ required: true, trigger: 'blur', validator: validPhone }],
+        password: [
+          { required: true, message: '请输入您的登录密码', trigger: 'blur' },
+          { min: 5, message: '密码不少于5位', trigger: 'blur' }
+        ]
       },
       loading: false,
       pwdType: 'password'
@@ -75,9 +90,9 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then(() => {
-            this.loading = false
+          this.$store.dispatch('Login', this.loginForm).then((response) => {
             this.$router.push({ path: '/' })
+            this.loading = false
           }).catch(() => {
             this.loading = false
           })

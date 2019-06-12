@@ -1,23 +1,19 @@
 import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
   state: {
-    token: getToken(),
+    userid: sessionStorage.getItem('USERID') || '',
     name: '',
-    avatar: '',
-    roles: []
+    roles: ''
   },
 
   mutations: {
-    SET_TOKEN: (state, token) => {
-      state.token = token
+    SET_USERID: (state, id) => {
+      state.userid = id
+      sessionStorage.setItem('USERID', id)
     },
     SET_NAME: (state, name) => {
       state.name = name
-    },
-    SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
@@ -27,12 +23,16 @@ const user = {
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
-          const data = response.data
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
+        login(userInfo.username, userInfo.password).then(response => {
+          const dataS = response.data
+          if (dataS.id === '2319F311BE294CB9A8FBF05F267ED77A') {
+            commit('SET_ROLES', ['1'])
+          } else {
+            commit('SET_ROLES', ['2'])
+          }
+          commit('SET_USERID', dataS.id)
+          commit('SET_NAME', dataS.username)
           resolve()
         }).catch(error => {
           reject(error)
@@ -43,11 +43,15 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
-          const data = response.data
-          commit('SET_ROLES', data.roles)
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
+        getInfo(state.userid).then(response => {
+          const dataS = response.data
+          if (dataS.id === '2319F311BE294CB9A8FBF05F267ED77A') {
+            commit('SET_ROLES', ['1'])
+          } else {
+            commit('SET_ROLES', ['2'])
+          }
+          commit('SET_USERID', dataS.id)
+          commit('SET_NAME', dataS.username)
           resolve(response)
         }).catch(error => {
           reject(error)
@@ -59,9 +63,8 @@ const user = {
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          removeToken()
+          commit('SET_USERID', '')
+          commit('SET_ROLES', '')
           resolve()
         }).catch(error => {
           reject(error)
@@ -72,8 +75,8 @@ const user = {
     // 前端 登出
     FedLogOut({ commit }) {
       return new Promise(resolve => {
-        commit('SET_TOKEN', '')
-        removeToken()
+        commit('SET_USERID', '')
+        commit('SET_ROLES', '')
         resolve()
       })
     }

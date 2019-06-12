@@ -32,7 +32,7 @@
         -->
         <el-pagination @size-change="currentPageSize" @current-change="search"
                     :current-page.sync="page" :page-sizes="[5, 10, 20, 30]"
-                    :page-size="size" layout="sizes, prev, pager, next" :total="total">
+                    :page-size="size" layout="total, sizes, prev, pager, next" :total="total">
         </el-pagination>
 
          <!-- 新增活动的弹出框代码
@@ -46,6 +46,9 @@
             </el-form-item>
             <el-form-item label="电话号" >
                 <el-input v-model="pojo.telno" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="登录密码" >
+                <el-input v-model="pojo.password" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="籍贯" >
                 <el-input v-model="pojo.addr" auto-complete="off"></el-input>
@@ -80,7 +83,7 @@ export default {
             userList:null,
             id:null,
             page:1,
-            size:5,
+            size:10,
             total:0
         }
     },
