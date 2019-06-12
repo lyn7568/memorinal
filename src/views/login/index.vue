@@ -7,19 +7,19 @@
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input name="username" type="text" v-model="loginForm.username" autoComplete="on" placeholder="username" />
+        <el-input name="username" type="text" v-model="loginForm.username" autoComplete="on" placeholder="请输入您的账号" />
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password"></svg-icon>
         </span>
         <el-input name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on"
-          placeholder="password"></el-input>
+          placeholder="请输入您的登录密码"></el-input>
           <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye" /></span>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">
-          Sign in
+          登录
         </el-button>
       </el-form-item>
       <!-- <div class="tips">
@@ -31,8 +31,6 @@
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
-
 export default {
   name: 'login',
   data() {
@@ -47,17 +45,7 @@ export default {
         if (!reg.test(value)) {
           callback(new Error('请输入正确的手机号码'))
         } else {
-          this.$http.get(checkRegister, { account: value }, function(response) {
-            if (response.success) {
-              if (response.data === -1) {
-                callback(new Error('该账号已停用，请联系管理员'))
-              } else if (response.data === 1) {
-                callback(new Error('该账号不存在，请检查后重试'))
-              } else if (response.data === 0) {
-                callback()
-              }
-            }
-          })
+          callback()
         }
       }
     }
@@ -87,14 +75,15 @@ export default {
       }
     },
     handleLogin() {
+      var that = this
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then((response) => {
-            this.$router.push({ path: '/' })
-            this.loading = false
+          that.loading = true
+          that.$store.dispatch('Login', that.loginForm).then((response) => {
+            that.$router.push({ path: '/' })
+            that.loading = false
           }).catch(() => {
-            this.loading = false
+            that.loading = false
           })
         } else {
           console.log('error submit!!')

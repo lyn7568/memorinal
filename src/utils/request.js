@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Message, MessageBox } from 'element-ui'
 import store from '../store'
-
+import { getToken } from '@/utils/auth'
 // 创建axios实例
 const service = axios.create({
   baseURL: process.env.BASE_API + '/api', // api的base_url
@@ -11,7 +11,7 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(config => {
   if (store.getters.token) {
-    config.headers['X-Token'] = store.getters.userid
+    config.headers['X-Token'] = getToken()
   }
   return config
 }, error => {
@@ -28,6 +28,7 @@ service.interceptors.response.use(
   */
     const res = response.data
     if (res.code !== 20000) {
+      console.log(res.message)
       Message({
         message: res.message,
         type: 'error',

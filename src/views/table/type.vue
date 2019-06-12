@@ -27,7 +27,7 @@
             <el-table-column fixed="right" label="操作" width="100">
                 <template slot-scope="scope">
                     <el-button @click="findById(scope.row.id)" type="text" size="small">修改</el-button>
-                    <el-button @click="deleteById(scope.row.id)" type="text" size="small">删除</el-button>
+                    <el-button v-if="roles.indexOf('1')>-1" @click="deleteById(scope.row.id)" type="text" size="small">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -95,6 +95,11 @@ export default {
             page:1,
             size:10,
             total:0
+        }
+    },
+    computed:{
+        roles() {
+            return this.$store.getters.roles
         }
     },
     created() {

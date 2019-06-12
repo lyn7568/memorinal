@@ -1,13 +1,18 @@
 import { login, logout, getInfo } from '@/api/login'
+import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
   state: {
+    token: getToken(),
     userid: sessionStorage.getItem('USERID') || '',
     name: '',
-    roles: ''
+    roles: []
   },
 
   mutations: {
+    SET_TOKEN: (state, token) => {
+      state.token = token
+    },
     SET_USERID: (state, id) => {
       state.userid = id
       sessionStorage.setItem('USERID', id)
@@ -26,14 +31,18 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo.username, userInfo.password).then(response => {
           const dataS = response.data
-          if (dataS.id === '2319F311BE294CB9A8FBF05F267ED77A') {
-            commit('SET_ROLES', ['1'])
-          } else {
-            commit('SET_ROLES', ['2'])
+          if (response.flag) {
+            if (dataS.id === '1138680837106176000') {
+              commit('SET_ROLES', ['1'])
+            } else {
+              commit('SET_ROLES', ['0'])
+            }
+            commit('SET_USERID', dataS.id)
+            commit('SET_NAME', dataS.username)
+            setToken(dataS.id)
+            commit('SET_TOKEN', dataS.id)
           }
-          commit('SET_USERID', dataS.id)
-          commit('SET_NAME', dataS.username)
-          resolve()
+          resolve(response)
         }).catch(error => {
           reject(error)
         })
@@ -45,13 +54,15 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo(state.userid).then(response => {
           const dataS = response.data
-          if (dataS.id === '2319F311BE294CB9A8FBF05F267ED77A') {
+          if (dataS.id === '1138680837106176000') {
             commit('SET_ROLES', ['1'])
           } else {
-            commit('SET_ROLES', ['2'])
+            commit('SET_ROLES', ['0'])
           }
           commit('SET_USERID', dataS.id)
           commit('SET_NAME', dataS.username)
+          setToken(dataS.id)
+          commit('SET_TOKEN', dataS.id)
           resolve(response)
         }).catch(error => {
           reject(error)
@@ -60,23 +71,27 @@ const user = {
     },
 
     // 登出
-    LogOut({ commit, state }) {
-      return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_USERID', '')
-          commit('SET_ROLES', '')
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
+    // LogOut({ commit, state }) {
+    //   return new Promise((resolve, reject) => {
+    //     logout(state.token).then(() => {
+    //       commit('SET_USERID', '')
+    //       commit('SET_TOKEN', '')
+    //       commit('SET_ROLES', [])
+    //       removeToken()
+    //       resolve()
+    //     }).catch(error => {
+    //       reject(error)
+    //     })
+    //   })
+    // },
 
     // 前端 登出
     FedLogOut({ commit }) {
       return new Promise(resolve => {
         commit('SET_USERID', '')
-        commit('SET_ROLES', '')
+        commit('SET_TOKEN', '')
+        commit('SET_ROLES', [])
+        removeToken()
         resolve()
       })
     }

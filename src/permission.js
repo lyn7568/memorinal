@@ -3,16 +3,26 @@ import store from './store'
 import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式
 import { Message } from 'element-ui'
+import { getToken } from '@/utils/auth'
 
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  if (store.getters.userid) {
+  if (getToken()) {
     if (to.path === '/login') {
       next({ path: '/' })
     } else {
       if (store.getters.roles.length === 0) {
         store.dispatch('GetInfo').then(res => {
+          const dataS = res.data
+          if (res.flag) {
+            var roles = []
+            if (dataS.id === '1138680837106176000') {
+              roles = ['1']
+            } else {
+              roles = ['2']
+            }
+          }
           next()
         }).catch(() => {
           store.dispatch('FedLogOut').then(() => {

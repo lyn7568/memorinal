@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-form :inline="true" class="demo-form-inline">
-            <el-form-item >
+            <el-form-item v-if="roles.indexOf('1')>-1">
                 <el-button type="primary" @click="dialogFormVisible = true;pojo={};id=null">新增</el-button>
             </el-form-item>
         </el-form>
@@ -13,7 +13,7 @@
             <el-table-column prop="createtime" label="创建用户时间" with="280"></el-table-column>
             <el-table-column prop="updatetime" label="更新用户时间" with="280"></el-table-column>
             <el-table-column prop="remark" label="用户备注" with="180"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
+            <el-table-column fixed="right" label="操作" width="100" v-if="roles.indexOf('1')>-1">
                 <template slot-scope="scope">
                     <el-button @click="findById(scope.row.id)" type="text" size="small">修改</el-button>
                     <el-button @click="deleteById(scope.row.id)" type="text" size="small">删除</el-button>
@@ -85,6 +85,11 @@ export default {
             page:1,
             size:10,
             total:0
+        }
+    },
+    computed:{
+        roles() {
+            return this.$store.getters.roles
         }
     },
     created() {
