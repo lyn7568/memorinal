@@ -3,9 +3,9 @@
 
     <!-- <panel-group @handleSetLineChartData="handleSetLineChartData"></panel-group> -->
 
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+    <!-- <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData"></line-chart>
-    </el-row>
+    </el-row> -->
 
     <el-row :gutter="32">
       <!-- <el-col :xs="24" :sm="24" :lg="8">
@@ -13,16 +13,16 @@
           <raddar-chart></raddar-chart>
         </div>
       </el-col> -->
-      <el-col :xs="24" :sm="24" :lg="12">
+      <el-col :xs="24" :sm="24" :lg="24">
         <div class="chart-wrapper">
           <pie-chart :pieData="pieData"></pie-chart>
         </div>
       </el-col>
-      <el-col :xs="24" :sm="24" :lg="12">
+      <!-- <el-col :xs="24" :sm="24" :lg="12">
         <div class="chart-wrapper">
           <bar-chart></bar-chart>
         </div>
-      </el-col>
+      </el-col> -->
     </el-row>
 
     <!-- <el-row :gutter="8">
@@ -88,7 +88,11 @@ export default {
   data() {
     return {
       lineChartData: lineChartData.newVisitis,
-      pieData: {}
+      pieData: {
+        sum: 0,
+        tit: [],
+        sData: []
+      }
     }
   },
   created() {
@@ -105,6 +109,9 @@ export default {
         tit: [],
         sData: []
       }
+      paymoneyApi.findSumCount().then( response => {
+          resultObj.sum = response.data
+      })
       if (typeData.flag && typeData.data) {
         var typeList = typeData.data
         for (let i = 0; i < typeList.length; ++i) {
@@ -115,7 +122,6 @@ export default {
               value: typeResult.data || 0,
               name: typeList[i].typename
             }
-            resultObj.sum += (typeResult.data || 0)
             resultObj.sData.push(cur)
           }
         }

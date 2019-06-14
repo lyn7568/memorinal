@@ -22,17 +22,17 @@
                 总金额: {{sumCount}}
             </el-form-item>
         </el-form>
-        <el-table :data="list" style="width: 100%">
-            <el-table-column prop="id" label="缴费id" with="450"></el-table-column>
-            <el-table-column prop="typename" label="缴费类型" with="50"></el-table-column>
-            <el-table-column prop="paycount" label="缴费金额" with="50"></el-table-column>
-            <el-table-column prop="payusername" label="缴费人姓名" with="50"></el-table-column>
-            <el-table-column prop="createtime" label="缴费时间" with="280"></el-table-column>
-            <el-table-column prop="remark" label="缴费备注" with="180"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
+        <el-table :data="list">
+            <el-table-column prop="id" label="缴费id"></el-table-column>
+            <el-table-column prop="typename" label="缴费类型"></el-table-column>
+            <el-table-column prop="paycount" label="缴费金额"></el-table-column>
+            <el-table-column prop="payusername" label="缴费人姓名"></el-table-column>
+            <el-table-column prop="paytime" label="缴费日期"></el-table-column>
+            <el-table-column prop="remark" label="缴费备注"></el-table-column>
+            <el-table-column fixed="right" label="操作" width="150">
                 <template slot-scope="scope">
-                    <el-button @click="findById(scope.row.id)" type="text" size="small">修改</el-button>
-                    <el-button @click="deleteById(scope.row.id)" type="text" size="small">删除</el-button>
+                    <el-button @click="findById(scope.row.id)" type="primary" size="mini" :disabled="clickable(scope.row)">修改</el-button>
+                    <el-button @click="deleteById(scope.row.id)" type="danger" size="mini" :disabled="clickable(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -44,7 +44,7 @@
 
         <el-dialog title="新增缴费" :visible.sync="dialogFormVisible">
         <el-form label-width="100px">
-            <el-form-item label="选择缴费类型" >
+            <el-form-item label="缴费类型" >
                 <el-select v-model="pojo.typeid" placeholder="请选择">
                     <!--v-for: 循环迭代 
                         :label : 对应的数据里存放城市的属性名称,这里是name
@@ -56,7 +56,7 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="选择缴费人" >
+            <el-form-item label="缴费人" >
                 <el-select v-model="pojo.payuserid" placeholder="请选择">
                     <!--v-for: 循环迭代 
                         :label : 对应的数据里存放城市的属性名称,这里是name
@@ -67,6 +67,15 @@
                                 :label="item.username" :value="item.id">
                     </el-option>
                 </el-select>
+            </el-form-item>
+            <el-form-item label="缴费日期" >
+                <el-date-picker
+                    v-model="pojo.paytime"
+                    type="date"
+                    :editable="false"
+                    placeholder="选择缴费日期"
+                    value-format="yyyy-MM-dd">
+                </el-date-picker>
             </el-form-item>
             <el-form-item label="缴费金额" >
                 <el-input v-model="pojo.paycount" auto-complete="off"></el-input>
@@ -103,6 +112,14 @@ export default {
             size:10,
             total:0,
             sumCount:null
+        }
+    },
+    computed: {
+        UName() {
+            return this.$store.getters.name
+        },
+        roles() {
+            return this.$store.getters.roles
         }
     },
     created() {
@@ -184,7 +201,10 @@ export default {
             paymoneyApi.findSumCount().then( response => {
                 this.sumCount = response.data;
             })
-        },  
+        },
+        clickable(row) {
+            return this.roles.indexOf('0')>-1 && this.UName!==row.payusername
+        }
     }
 }
 </script>

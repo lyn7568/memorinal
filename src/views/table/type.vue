@@ -24,10 +24,10 @@
             <el-table-column prop="createtime" label="创建缴费类型时间" with="280"></el-table-column>
             <el-table-column prop="updatetime" label="更新缴费类型时间" with="280"></el-table-column>
             <el-table-column prop="remark" label="缴费备注" with="180"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="100">
+            <el-table-column fixed="right" label="操作" :width="roles.indexOf('1')>-1?'150':'80'">
                 <template slot-scope="scope">
-                    <el-button @click="findById(scope.row.id)" type="text" size="small">修改</el-button>
-                    <el-button v-if="roles.indexOf('1')>-1" @click="deleteById(scope.row.id)" type="text" size="small">删除</el-button>
+                    <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
+                    <el-button v-if="roles.indexOf('1')>-1" @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>

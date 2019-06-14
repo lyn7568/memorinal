@@ -2,7 +2,7 @@
   <div class="login-container">
     <el-form autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" label-width="0px"
       class="card-box login-form">
-      <h3 class="title">云趣园三区记账系统</h3>
+      <h3 class="title">e缴费管理系统</h3>
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
@@ -80,7 +80,11 @@ export default {
         if (valid) {
           that.loading = true
           that.$store.dispatch('Login', that.loginForm).then((response) => {
-            that.$router.push({ path: '/' })
+            var roles = that.$store.getters.roles
+            that.$store.dispatch('GenerateRoutes', { roles }).then(() => {
+              that.$router.addRoutes(that.$store.getters.addRouters)
+              that.$router.push({ path: '/' })
+            })
             that.loading = false
           }).catch(() => {
             that.loading = false

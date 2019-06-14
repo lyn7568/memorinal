@@ -13,10 +13,10 @@
             <el-table-column prop="createtime" label="创建用户时间" with="280"></el-table-column>
             <el-table-column prop="updatetime" label="更新用户时间" with="280"></el-table-column>
             <el-table-column prop="remark" label="用户备注" with="180"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="100" v-if="roles.indexOf('1')>-1">
+            <el-table-column fixed="right" label="操作" width="150" v-if="roles.indexOf('1')>-1">
                 <template slot-scope="scope">
-                    <el-button @click="findById(scope.row.id)" type="text" size="small">修改</el-button>
-                    <el-button @click="deleteById(scope.row.id)" type="text" size="small">删除</el-button>
+                    <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
+                    <el-button @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -47,9 +47,9 @@
             <el-form-item label="电话号" >
                 <el-input v-model="pojo.telno" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="登录密码" >
+            <!-- <el-form-item label="登录密码" >
                 <el-input v-model="pojo.password" auto-complete="off"></el-input>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="籍贯" >
                 <el-input v-model="pojo.addr" auto-complete="off"></el-input>
             </el-form-item>

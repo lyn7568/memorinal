@@ -23,11 +23,11 @@ export default {
     ])
   },
   created() {
-    if (this.roles.indexOf('1') > -1) {
-      this.currentRole = 'adminDashboard'
-    } else {
-      this.currentRole = 'editorDashboard'
-    }
+    // if (this.roles.indexOf('1') > -1) {
+    //   this.currentRole = 'adminDashboard'
+    // } else {
+    //   this.currentRole = 'editorDashboard'
+    // }
   }
 }
 </script>

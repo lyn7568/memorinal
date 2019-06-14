@@ -39,8 +39,8 @@ const user = {
             }
             commit('SET_USERID', dataS.id)
             commit('SET_NAME', dataS.username)
-            setToken(dataS.id)
-            commit('SET_TOKEN', dataS.id)
+            setToken(dataS.token)
+            commit('SET_TOKEN', dataS.token)
           }
           resolve(response)
         }).catch(error => {
@@ -61,8 +61,6 @@ const user = {
           }
           commit('SET_USERID', dataS.id)
           commit('SET_NAME', dataS.username)
-          setToken(dataS.id)
-          commit('SET_TOKEN', dataS.id)
           resolve(response)
         }).catch(error => {
           reject(error)

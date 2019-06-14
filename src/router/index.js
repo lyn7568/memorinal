@@ -24,6 +24,7 @@ import Layout from '../views/layout/Layout'
 export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
+  { path: '/401', component: () => import('@/views/401'), hidden: true },
 
   {
     path: '/',
@@ -44,7 +45,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Paymoney',
         component: () => import('@/views/table/paymoney'),
-        meta: { title: '缴费管理', icon: 'table' }
+        meta: { title: '缴费列表', icon: 'table' }
       }
     ]
   },
@@ -56,7 +57,7 @@ export const constantRouterMap = [
         path: 'index',
         name: 'Type',
         component: () => import('@/views/table/type'),
-        meta: { title: '缴费类型管理', icon: 'form' }
+        meta: { title: '缴费类型', icon: 'form' }
       }
     ]
   },
@@ -68,12 +69,10 @@ export const constantRouterMap = [
         path: 'index',
         name: 'User',
         component: () => import('@/views/table/user'),
-        meta: { title: '缴费用户管理', icon: 'user' }
+        meta: { title: '缴费用户', icon: 'peoples' }
       }
     ]
-  },
-
-  { path: '*', redirect: '/404', hidden: true }
+  }
 ]
 
 export default new Router({
@@ -82,3 +81,30 @@ export default new Router({
   routes: constantRouterMap
 })
 
+export const asyncRouterMap = [
+  {
+    path: '/personal',
+    component: Layout,
+    alwaysShow: true,
+    meta: {
+      title: '个人中心',
+      icon: 'user',
+      roles: ['0']
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'update',
+        component: () => import('@/views/personal/update'),
+        meta: { title: '修改资料' }
+      },
+      {
+        path: 'pwd',
+        name: 'changePwd',
+        component: () => import('@/views/personal/changePwd'),
+        meta: { title: '修改密码' }
+      }
+    ]
+  },
+  { path: '*', redirect: '/404', hidden: true }
+]
