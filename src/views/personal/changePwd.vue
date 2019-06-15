@@ -74,8 +74,8 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             const oldPassword = this.ruleForm2.oldpass
-            const NewPassword = this.ruleForm2.checkPass
-            userApi.changePwd(this.UID,oldPassword,NewPassword).then( response => {
+            const newPassword = this.ruleForm2.checkPass
+            userApi.changePwd(this.UID,oldPassword,newPassword).then(response => {
                 this.$message({
                     showClose: true,
                     message: response.message,

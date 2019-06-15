@@ -49,13 +49,13 @@ export default {
       method: 'post'
     })
   },
-  changePwd: function (id,oldPassword,NewPassword) {
+  changePwd: function (id,oldPassword,newPassword) {
     return request({
       url: `/user/updatepd/${id}`,
       method: 'put',
       data: {
         oldPassword,
-        NewPassword
+        newPassword
       }
     })
   }
