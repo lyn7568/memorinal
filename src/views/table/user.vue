@@ -6,13 +6,13 @@
             </el-form-item>
         </el-form>
         <el-table :data="list" style="width: 100%">
-            <el-table-column prop="id" label="缴费用户id" with="450"></el-table-column>
-            <el-table-column prop="username" label="缴费用户名称" with="50"></el-table-column>
-            <el-table-column prop="telno" label="缴费用户电话" with="50"></el-table-column>
-            <el-table-column prop="addr" label="缴费用户籍贯" with="50"></el-table-column>
-            <el-table-column prop="createtime" label="创建用户时间" with="280"></el-table-column>
-            <el-table-column prop="updatetime" label="更新用户时间" with="280"></el-table-column>
-            <el-table-column prop="remark" label="用户备注" with="180"></el-table-column>
+            <el-table-column prop="id" label="用户id" with="450"></el-table-column>
+            <el-table-column prop="username" label="用户名称" with="50"></el-table-column>
+            <el-table-column prop="telno" label="用户电话" with="50"></el-table-column>
+            <el-table-column prop="addr" label="用户籍贯" with="50"></el-table-column>
+            <el-table-column prop="createtime" label="创建时间" with="280"></el-table-column>
+            <el-table-column prop="updatetime" label="更新时间" with="280"></el-table-column>
+            <el-table-column prop="remark" label="备注" with="180"></el-table-column>
             <el-table-column fixed="right" label="操作" width="150" v-if="roles.indexOf('1')>-1">
                 <template slot-scope="scope">
                     <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>

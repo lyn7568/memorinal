@@ -11,6 +11,7 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import router from './router'
 import store from './store'
+import './utils/filter'
 
 import '@/icons' // icon
 import '@/permission' // permission control
@@ -23,6 +24,10 @@ new Vue({
   el: '#app',
   router,
   store,
+  created() {
+    this.$store.dispatch('getDictuList')
+    this.$store.dispatch('getDictType')
+  },
   template: '<App/>',
   components: { App }
 })

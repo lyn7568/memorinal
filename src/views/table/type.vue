@@ -19,11 +19,21 @@
             </el-form-item>
         </el-form>
         <el-table :data="list" style="width: 100%">
-            <el-table-column prop="id" label="缴费类型id" with="450"></el-table-column>
-            <el-table-column prop="typename" label="缴费类型名称" with="50"></el-table-column>
-            <el-table-column prop="createtime" label="创建缴费类型时间" with="280"></el-table-column>
-            <el-table-column prop="updatetime" label="更新缴费类型时间" with="280"></el-table-column>
-            <el-table-column prop="remark" label="缴费备注" with="180"></el-table-column>
+            <el-table-column prop="id" label="类型id"></el-table-column>
+            <el-table-column prop="typename" label="类型名称"></el-table-column>
+            <el-table-column label="创建人">
+                <template slot-scope="scope">
+                    {{scope.row.userid | uInfo}}
+                </template>
+            </el-table-column>
+            <el-table-column label="修改人">
+                <template slot-scope="scope">
+                    {{scope.row.updatetypeuid | uInfo}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="createtime" label="创建时间"></el-table-column>
+            <el-table-column prop="updatetime" label="修改时间"></el-table-column>
+            <el-table-column prop="remark" label="备注"></el-table-column>
             <el-table-column fixed="right" label="操作" :width="roles.indexOf('1')>-1?'150':'80'">
                 <template slot-scope="scope">
                     <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
@@ -52,21 +62,11 @@
     -->
     <el-dialog title="新增缴费类型" :visible.sync="dialogFormVisible">
         <el-form label-width="100px">
-            <el-form-item label="缴费类型名称" >
+            <el-form-item label="类型名称" >
                 <el-input v-model="pojo.typename" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="创建人名称" >
-                <el-select v-model="pojo.userid" placeholder="请选择">
-                    <!--v-for: 循环迭代 
-                        :label : 对应的数据里存放城市的属性名称,这里是name
-                        :value : 存放城市的id
-                        :key : 也是对应的id
-                    -->
-                    <el-option v-for="item in userList" :key="item.id"
-                                :label="item.username" :value="item.id">
-                    </el-option>
-                </el-select>
-            </el-form-item>
+            <el-form-item v-if="!id" label="创建人" prop="userid">{{name}}</el-form-item>
+            <el-form-item v-if="id" label="修改人" prop="updatetypeuid">{{name}}</el-form-item>
             <el-form-item label="备注" >
                 <el-input v-model="pojo.remark" auto-complete="off"></el-input>
             </el-form-item>
@@ -100,6 +100,12 @@ export default {
     computed:{
         roles() {
             return this.$store.getters.roles
+        },
+        name() {
+            return this.$store.getters.name
+        },
+        UID() {
+            return this.$store.getters.userid
         }
     },
     created() {
@@ -119,6 +125,11 @@ export default {
         },
         //保存新增活动
        saveOrUpdate() {
+            if(this.id) {
+                this.pojo.updatetypeuid = this.UID
+            }else{
+                this.pojo.userid = this.UID
+            }            
             typeApi.saveOrUpdate(this.id,this.pojo).then( response => {
                 this.$message({
                     showClose: true,
@@ -162,7 +173,6 @@ export default {
         search() {
             typeApi.search(this.page,this.size).then( response => {
                 this.list = response.data.rows //获取列表数据
-                console.log(this.list)
                 this.total = response.data.total
             })
         },

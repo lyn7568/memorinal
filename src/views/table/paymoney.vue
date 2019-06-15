@@ -26,7 +26,7 @@
             <el-table-column prop="id" label="缴费id"></el-table-column>
             <el-table-column prop="typename" label="缴费类型"></el-table-column>
             <el-table-column prop="paycount" label="缴费金额"></el-table-column>
-            <el-table-column prop="payusername" label="缴费人姓名"></el-table-column>
+            <el-table-column prop="payusername" label="缴费人"></el-table-column>
             <el-table-column prop="paytime" label="缴费日期"></el-table-column>
             <el-table-column prop="remark" label="缴费备注"></el-table-column>
             <el-table-column fixed="right" label="操作" width="150">
@@ -102,8 +102,6 @@ export default {
         return {
             list:null,
             searchMap:{},
-            typeList :null,
-            userList:null,
             moneyList:null,
             dialogFormVisible :false,
             pojo:{},
@@ -115,6 +113,12 @@ export default {
         }
     },
     computed: {
+        userList() {
+           return this.$store.getters.uListArrs 
+        },
+        typeList() {
+           return this.$store.getters.typeArrs
+        },
         UName() {
             return this.$store.getters.name
         },
@@ -124,24 +128,12 @@ export default {
     },
     created() {
         this.search()
-        this.fetchTypeList()
-        this.fetchUserList()
         this.findSumCount()
     },
     methods: {
         fetchData() {
             paymoneyApi.getList().then(response => {
                 this.list = response.data;
-            })
-        },
-        fetchTypeList() {
-            typeApi.getList().then(response => {
-                this.typeList = response.data;
-            })
-        },
-        fetchUserList() {
-            userApi.getList().then(response => {
-                this.userList = response.data;
             })
         },
         //保存新增活动
