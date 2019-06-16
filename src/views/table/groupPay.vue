@@ -19,14 +19,28 @@
                 <el-button type="primary" @click="dialogFormVisible = true;pojo={};id=null">新增</el-button>
             </el-form-item>
             <el-form-item >
-                总金额: {{sumCount}}
+                总金额: ￥{{sumCount}}
             </el-form-item>
         </el-form>
         <el-table :data="list">
             <el-table-column prop="id" label="缴费id"></el-table-column>
-            <el-table-column prop="typename" label="缴费类型"></el-table-column>
-            <el-table-column prop="paycount" label="缴费金额"></el-table-column>
-            <el-table-column prop="payusername" label="缴费人"></el-table-column>
+            <el-table-column prop="typeid" label="缴费类型">
+                <template slot-scope="scope">
+                    {{scope.row.typeid | typeInfo}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="paycount" label="缴费总额"></el-table-column>
+            <el-table-column prop="payuserid" label="缴费人">
+                <template slot-scope="scope">
+                    {{scope.row.payuserid | uInfo}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="shareuserid" label="平摊人">
+                <template slot-scope="scope">
+                    {{scope.row.shareuserid | uInfo}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="sharemoney" label="均摊金额"></el-table-column>
             <el-table-column prop="paytime" label="缴费日期"></el-table-column>
             <el-table-column prop="remark" label="缴费备注"></el-table-column>
             <el-table-column fixed="right" label="操作" width="150">
@@ -42,7 +56,7 @@
                     :page-size="size" layout="total, sizes, prev, pager, next" :total="total">
         </el-pagination>
 
-        <el-dialog title="新增缴费" :visible.sync="dialogFormVisible">
+        <el-dialog title="新增缴费" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
         <el-form label-width="100px">
             <el-form-item label="缴费类型" >
                 <el-select v-model="pojo.typeid" placeholder="请选择">
@@ -80,6 +94,17 @@
             <el-form-item label="缴费金额" >
                 <el-input v-model="pojo.paycount" auto-complete="off"></el-input>
             </el-form-item>
+            <el-form-item label="平摊人" >
+                <el-select v-model="ptUserArr" multiple placeholder="请选择"
+                    @change="changePtUserFun">
+                    <el-option v-for="item in userList" :key="item.id"
+                                :label="item.username" :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="均摊金额" >
+                <el-input v-model="pojo.sharemoney" disabled></el-input>
+            </el-form-item>
             <el-form-item label="备注" >
                 <el-input v-model="pojo.remark" auto-complete="off"></el-input>
             </el-form-item>
@@ -96,6 +121,7 @@
 import paymoneyApi from "@/api/paymoney"
 import typeApi from "@/api/type"
 import userApi from "@/api/user"
+import { arrToStr, strToArr } from '@/utils'
 
 export default {
     data() {
@@ -109,7 +135,8 @@ export default {
             page:1,
             size:10,
             total:0,
-            sumCount:null
+            sumCount:0,
+            ptUserArr: []
         }
     },
     computed: {
@@ -131,6 +158,10 @@ export default {
         this.findSumCount()
     },
     methods: {
+        changePtUserFun(val) {
+            this.ptUserArr = val
+            this.pojo.sharemoney = (Number(this.pojo.paycount) / val.length).toFixed(2)
+        },
         fetchData() {
             paymoneyApi.getList().then(response => {
                 this.list = response.data;
@@ -138,6 +169,7 @@ export default {
         },
         //保存新增活动
         saveOrUpdate() {
+            this.pojo.shareuserid = arrToStr(this.ptUserArr)
             paymoneyApi.saveOrUpdate(this.id,this.pojo).then( response => {
                 this.$message({
                     showClose: true,
@@ -153,8 +185,10 @@ export default {
         },
         findById(id) {
             this.id = id;
+            this.ptUserArr = []
             paymoneyApi.findById(id).then(response => {
                 this.pojo = response.data;
+                this.ptUserArr = strToArr(this.pojo.shareuserid)
                 this.dialogFormVisible = true
             })
         },

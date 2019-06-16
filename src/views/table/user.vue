@@ -13,10 +13,11 @@
             <el-table-column prop="createtime" label="创建时间" with="280"></el-table-column>
             <el-table-column prop="updatetime" label="更新时间" with="280"></el-table-column>
             <el-table-column prop="remark" label="备注" with="180"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="150" v-if="roles.indexOf('1')>-1">
+            <el-table-column fixed="right" label="操作" width="240" v-if="roles.indexOf('1')>-1">
                 <template slot-scope="scope">
                     <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
                     <el-button @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
+                    <el-button @click="resetById(scope.row.id)" type="warning" size="mini">重置密码</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -39,7 +40,7 @@
         :visible.sync: 属性值是data里的一个属性,控制页面是否显示
         label-width="80px" : 描述信息和输入框在一行显示
     -->
-    <el-dialog title="新增用户" :visible.sync="dialogFormVisible">
+    <el-dialog title="新增用户" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
         <el-form label-width="100px">
             <el-form-item label="用户名" >
                 <el-input v-model="pojo.username" auto-complete="off"></el-input>
@@ -139,6 +140,19 @@ export default {
                     if(response.flag){
                         this.search() ;    //如果删除执行成功,重新加载页面
                     }
+                })  
+            })  
+        },
+        resetById(id) {
+            this.$confirm('确定要重置该用户密码?', '提示', {
+            type: 'warning'
+            }).then(() => {
+                userApi.resetById(id).then( response => {
+                    this.$message({
+                        showClose: true,
+                        message: response.message,
+                        type: response.flag?'success':'error'
+                        });
                 })  
             })  
         },

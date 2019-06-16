@@ -91,3 +91,29 @@ export function debounce(func, wait, immediate) {
     return result
   }
 }
+
+/**
+ * String与Array之间的转换
+ */
+export function strToArr(str) {
+  var subs = []
+  if (str) {
+    if (str.indexOf(',')) {
+      subs = str.split(',')
+    } else {
+      subs[0] = str
+    }
+    return subs
+  } else {
+    return subs
+  }
+}
+export function arrToStr(arr, fh = ',') {
+  var strs = ''
+  if (arr) {
+    strs = arr.join(fh)
+    return strs
+  } else {
+    return strs
+  }
+}

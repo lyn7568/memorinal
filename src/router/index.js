@@ -40,12 +40,20 @@ export const constantRouterMap = [
   {
     path: '/paymoney',
     component: Layout,
+    // alwaysShow: true,
+    meta: { title: '缴费详情', icon: 'table' },
     children: [
       {
-        path: 'index',
-        name: 'Paymoney',
-        component: () => import('@/views/table/paymoney'),
-        meta: { title: '缴费列表', icon: 'table' }
+        path: 'group',
+        name: 'groupPay',
+        component: () => import('@/views/table/groupPay'),
+        meta: { title: '群组缴费' }
+      },
+      {
+        path: 'owner',
+        name: 'ownerPay',
+        component: () => import('@/views/table/ownerPay'),
+        meta: { title: '个人缴费' }
       }
     ]
   },

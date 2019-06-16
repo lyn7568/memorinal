@@ -59,5 +59,58 @@ export default {
       url: `/paymoney/sum/${typeid}`,
       method: 'get'
     })
+  },
+
+  searchOwner: function(userid, page, size) {
+    return request({
+      url: `/indivpaymoney/search/${userid}/${page}/${size}`,
+      method: 'post'
+    })
+  },
+  saveOwner: function(pojo) {
+    return request({
+      url: '/indivpaymoney',
+      method: 'post',
+      data: pojo
+    })
+  },
+  findByIdOwner: function(id) {
+    return request({
+      url: `/indivpaymoney/${id}`,
+      method: 'get'
+    })
+  },
+  updateOwner: function(id, pojo) {
+    return request({
+      url: `/indivpaymoney/${id}`,
+      method: 'put',
+      data: pojo
+    })
+  },
+  // 新增和修改合并为一个方法
+  saveOrUpdateOwner: function(id, pojo) {
+    if (id !== undefined && id !== null && id !== '') {
+      return this.updateOwner(id, pojo) // 有id修改
+    } else {
+      return this.saveOwner(pojo) // 没有id,保存
+    }
+  },
+  deleteByIdOwner: function(id) {
+    return request({
+      url: `/indivpaymoney/${id}`,
+      method: 'delete'
+    })
+  },
+  findSumCountOwner: function(userid) {
+    return request({
+      url: `/indivpaymoney/sum/${userid}`,
+      method: 'get'
+    })
+  },
+  findSumCountByTypeOwner: function(typeid) {
+    return request({
+      url: `/indivpaymoney/sum/${userid}/${typeid}`,
+      method: 'get'
+    })
   }
 }

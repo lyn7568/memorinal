@@ -51,12 +51,18 @@ export default {
   },
   changePwd: function (id,oldPassword,newPassword) {
     return request({
-      url: `/user/updatepd/${id}`,
+      url: `/user/updatepwd/${id}`,
       method: 'put',
       data: {
         oldPassword,
         newPassword
       }
+    })
+  },
+  resetById: function (id) {
+    return request({
+      url: `/user/resetpwd/${id}`,
+      method: 'put'
     })
   }
 }
