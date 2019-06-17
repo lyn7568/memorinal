@@ -28,18 +28,24 @@
                     {{scope.row.typeid | typeInfo}}
                 </template>
             </el-table-column>
-            <el-table-column prop="paycount" label="缴费金额"></el-table-column>
-            <el-table-column prop="userid" label="缴费人">
+            <el-table-column prop="paycount" label="缴费总额"></el-table-column>
+            <el-table-column prop="payuserid" label="缴费人">
                 <template slot-scope="scope">
-                    {{scope.row.userid | uInfo}}
+                    {{scope.row.payuserid | uInfo}}
                 </template>
             </el-table-column>
+            <el-table-column prop="shareuserid" label="平摊人">
+                <template slot-scope="scope">
+                    {{scope.row.shareuserid | uInfo}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="sharemoney" label="均摊金额"></el-table-column>
             <el-table-column prop="paytime" label="缴费日期"></el-table-column>
             <el-table-column prop="remark" label="缴费备注"></el-table-column>
             <el-table-column fixed="right" label="操作" width="150">
                 <template slot-scope="scope">
-                    <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
-                    <el-button @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
+                    <el-button @click="findById(scope.row.id)" type="primary" size="mini" :disabled="clickable(scope.row)">修改</el-button>
+                    <el-button @click="deleteById(scope.row.id)" type="danger" size="mini" :disabled="clickable(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -63,6 +69,18 @@
                     </el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="缴费人" >
+                <el-select v-model="pojo.payuserid" placeholder="请选择">
+                    <!--v-for: 循环迭代 
+                        :label : 对应的数据里存放城市的属性名称,这里是name
+                        :value : 存放城市的id
+                        :key : 也是对应的id
+                    -->
+                    <el-option v-for="item in userList" :key="item.id"
+                                :label="item.username" :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item label="缴费日期" >
                 <el-date-picker
                     v-model="pojo.paytime"
@@ -74,6 +92,17 @@
             </el-form-item>
             <el-form-item label="缴费金额" >
                 <el-input v-model="pojo.paycount" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="平摊人" >
+                <el-select v-model="ptUserArr" multiple placeholder="请选择"
+                    @change="changePtUserFun">
+                    <el-option v-for="item in userList" :key="item.id"
+                                :label="item.username" :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="均摊金额" >
+                <el-input v-model="pojo.sharemoney" disabled></el-input>
             </el-form-item>
             <el-form-item label="备注" >
                 <el-input v-model="pojo.remark" auto-complete="off"></el-input>
@@ -89,10 +118,12 @@
 
 <script>
 import paymoneyApi from "@/api/paymoney"
+import { arrToStr, strToArr } from '@/utils'
 
 export default {
     data() {
         return {
+            groupid: '',
             list:null,
             searchMap:{},
             moneyList:null,
@@ -102,7 +133,8 @@ export default {
             page:1,
             size:10,
             total:0,
-            sumCount:0
+            sumCount:0,
+            ptUserArr: []
         }
     },
     computed: {
@@ -120,18 +152,25 @@ export default {
         }
     },
     created() {
-        this.search()
+        if (this.$route.query.id) {
+            this.groupid = this.$route.query.id
+            this.search()
+        }
     },
     methods: {
-        findSumCount() {
-            paymoneyApi.findSumCountOwner(this.UID).then( response => {
-                this.sumCount = response.data;
+        changePtUserFun(val) {
+            this.ptUserArr = val
+            this.pojo.sharemoney = (Number(this.pojo.paycount) / val.length).toFixed(2)
+        },
+        fetchData() {
+            paymoneyApi.getList().then(response => {
+                this.list = response.data;
             })
         },
         //保存新增活动
         saveOrUpdate() {
-            this.pojo.userid = this.UID
-            paymoneyApi.saveOrUpdateOwner(this.id,this.pojo).then( response => {
+            this.pojo.shareuserid = arrToStr(this.ptUserArr)
+            paymoneyApi.saveOrUpdate(this.id,this.pojo).then( response => {
                 this.$message({
                     showClose: true,
                     message: response.message,
@@ -146,8 +185,10 @@ export default {
         },
         findById(id) {
             this.id = id;
-            paymoneyApi.findByIdOwner(id).then(response => {
+            this.ptUserArr = []
+            paymoneyApi.findById(id).then(response => {
                 this.pojo = response.data;
+                this.ptUserArr = strToArr(this.pojo.shareuserid)
                 this.dialogFormVisible = true
             })
         },
@@ -158,7 +199,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
             }).then(() => {  //点击确定,进入then()方法,删除活动
-                paymoneyApi.deleteByIdOwner(id).then( response => {
+                paymoneyApi.deleteById(id).then( response => {
                     this.$message({
                         showClose: true,
                         message: response.message,
@@ -172,7 +213,7 @@ export default {
         },
          //分页查询的方法
         search() {
-            paymoneyApi.searchOwner(this.UID, this.page,this.size).then( response => {
+            paymoneyApi.search(this.groupid,this.page,this.size).then( response => {
                 this.list = response.data.rows //获取列表数据
                 //console.log(response.data.rows)
                 this.total = response.data.total
@@ -182,6 +223,14 @@ export default {
         currentPageSize(val){
             this.size = val
             this.search()
+        },
+        findSumCount() {
+            paymoneyApi.findSumCount().then( response => {
+                this.sumCount = response.data;
+            })
+        },
+        clickable(row) {
+            return this.roles.indexOf('0')>-1 && this.UID!==row.payuserid
         }
     }
 }

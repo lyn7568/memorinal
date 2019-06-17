@@ -19,7 +19,6 @@
             </el-form-item>
         </el-form>
         <el-table :data="list" style="width: 100%">
-            <el-table-column prop="id" label="群组id"></el-table-column>
             <el-table-column prop="groupname" label="群组名称"></el-table-column>
             <el-table-column label="创建人">
                 <template slot-scope="scope">
@@ -43,10 +42,10 @@
                 <template slot-scope="scope">
                     <template v-if="UID===scope.row.createuserid">
                         <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
-                        <el-button v-if="roles.indexOf('1')>-1" @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
+                        <el-button @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
                     </template>
                     <template v-else>
-                        <el-button @click="joinGroup(scope.row.id)" type="primary" size="mini">加入群组</el-button>
+                        <el-button @click="joinGroup(scope.row.id)" :disabled="ifBeyondGroup(scope.row)" :type="ifBeyondGroup(scope.row)?'info':'primary'" size="mini">{{ifBeyondGroup(scope.row)?'已加入':'加入群组'}}</el-button>
                     </template>
                 </template>
             </el-table-column>
@@ -73,13 +72,16 @@
     <el-dialog title="新增缴费群组" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
         <el-form label-width="100px">
             <el-form-item label="群组名称" >
-                <el-input v-model="pojo.typename" auto-complete="off"></el-input>
+                <el-input v-model="pojo.groupname"></el-input>
             </el-form-item>
             <el-form-item label="群组密钥" >
-                <el-input v-model="pojo.grouppwd" type="password" auto-complete="off"></el-input>
+                <el-input v-model="pojo.grouppwd" type="password"></el-input>
             </el-form-item>
             <el-form-item v-if="!id" label="创建人" prop="createuserid">{{name}}</el-form-item>
             <el-form-item v-if="id" label="修改人" prop="updateuserid">{{name}}</el-form-item>
+            <el-form-item label="备注">
+                <el-input v-model="pojo.remark"></el-input>
+            </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -91,6 +93,7 @@
 
 <script>
 import groupApi from "@/api/group"
+import { strToArr, arrToStr } from '@/utils'
 
 export default {
     data() {
@@ -120,12 +123,13 @@ export default {
         this.search()
     },
     methods: {
-       saveOrUpdate() {
+        saveOrUpdate() {
             if(this.id) {
-                this.pojo.updatetypeuid = this.UID
+                this.pojo.updateuserid = this.UID
             }else{
-                this.pojo.userid = this.UID
-            }            
+                this.pojo.createuserid = this.UID
+            }
+            this.pojo.groupmembers = this.UID     
             groupApi.saveOrUpdate(this.id,this.pojo).then( response => {
                 this.$message({
                     showClose: true,
@@ -177,7 +181,32 @@ export default {
         currentPageSize(val){
             this.size = val
             this.search()
-        }    
+        },
+        joinGroup(id) {
+            this.$prompt('请输入群组密钥', '提示', {
+            }).then(({ value }) => {
+                groupApi.joinGroup({
+                    userid: this.UID,
+                    groupid: id,
+                    grouppwd: value
+                }).then( response => {
+                    this.$message({
+                        showClose: true,
+                        message: response.message,
+                        type: response.flag?'success':'error'
+                    });
+                    if(response.flag){
+                        this.search()
+                    }
+                })
+            }).catch(err=>{})
+        },
+        ifBeyondGroup(row) {
+            if (row.groupmembers) {
+                const uarr = strToArr(row.groupmembers)
+                return uarr.indexOf(this.UID) > -1 || false
+            }
+        }
     }
 }
 </script>

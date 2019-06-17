@@ -19,7 +19,6 @@
             </el-form-item>
         </el-form>
         <el-table :data="list" style="width: 100%">
-            <el-table-column prop="id" label="类型id"></el-table-column>
             <el-table-column prop="typename" label="类型名称"></el-table-column>
             <el-table-column label="创建人">
                 <template slot-scope="scope">

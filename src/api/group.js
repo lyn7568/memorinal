@@ -40,5 +40,12 @@ export default {
       url: `/group/${id}`,
       method: 'delete'
     })
+  },
+  joinGroup: function(dataS) {
+    return request({
+      url: `/group/addusertogroup`,
+      method: 'post',
+      data: dataS
+    })
   }
 }

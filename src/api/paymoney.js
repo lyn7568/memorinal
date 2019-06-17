@@ -2,12 +2,6 @@
 import request from '@/utils/request'
 
 export default {
-  getList: function() {
-    return request({
-      url: '/paymoney/payinfo',
-      method: 'get',
-    })
-  },
   save: function(pojo) {
     return request({
       url: '/paymoney',
@@ -42,9 +36,9 @@ export default {
       method: 'delete'
     })
   },
-  search: function(page, size) {
+  search: function(groupid,page, size) {
     return request({
-      url: `/paymoney/search/${page}/${size}`,
+      url: `/paymoney/search/${groupid}/${page}/${size}`,
       method: 'post'
     })
   },

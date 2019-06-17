@@ -6,7 +6,6 @@
             </el-form-item>
         </el-form>
         <el-table :data="list" style="width: 100%">
-            <el-table-column prop="id" label="用户id" with="450"></el-table-column>
             <el-table-column prop="username" label="用户名称" with="50"></el-table-column>
             <el-table-column prop="telno" label="用户电话" with="50"></el-table-column>
             <el-table-column prop="addr" label="用户籍贯" with="50"></el-table-column>
