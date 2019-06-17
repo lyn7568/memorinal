@@ -107,7 +107,7 @@ export default {
       method: 'get'
     })
   },
-  findSumCountByTypeOwner: function(typeid) {
+  findSumCountByTypeOwner: function(userid, typeid) {
     return request({
       url: `/indivpaymoney/sum/${userid}/${typeid}`,
       method: 'get'

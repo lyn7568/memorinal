@@ -13,9 +13,14 @@
           <raddar-chart></raddar-chart>
         </div>
       </el-col> -->
-      <el-col :xs="24" :sm="24" :lg="24">
+      <el-col :xs="24" :sm="24" :lg="12">
         <div class="chart-wrapper">
           <pie-chart :pieData="pieData"></pie-chart>
+        </div>
+      </el-col>
+      <el-col :xs="24" :sm="24" :lg="12">
+        <div class="chart-wrapper">
+          <pie-chart :pieData="pieDataOwner"></pie-chart>
         </div>
       </el-col>
       <!-- <el-col :xs="24" :sm="24" :lg="12">
@@ -89,44 +94,76 @@ export default {
     return {
       lineChartData: lineChartData.newVisitis,
       pieData: {
+        topic: '群组缴费',
+        sum: 0,
+        tit: [],
+        sData: []
+      },
+      pieDataOwner: {
+        topic: '个人缴费',
         sum: 0,
         tit: [],
         sData: []
       }
     }
   },
+  computed: {
+    UID() {
+      return this.$store.getters.userid
+    },
+    typeList() {
+      return this.$store.getters.typeArrs
+    }
+  },
   created() {
-    this.getAllType()
+    this.getGroupAllCosts()
+    this.getOwnerAllCosts()
   },
   methods: {
     handleSetLineChartData(type) {
       this.lineChartData = lineChartData[type]
     },
-    async getAllType(){
-      let typeData = await typeApi.getList()
-      var resultObj = {
-        sum: 0,
-        tit: [],
-        sData: []
-      }
+    async getGroupAllCosts() {
+      var titArr = []
+      var arrObj = []
       paymoneyApi.findSumCount().then( response => {
-          resultObj.sum = response.data
+          this.pieData.sum = response.data
       })
-      if (typeData.flag && typeData.data) {
-        var typeList = typeData.data
-        for (let i = 0; i < typeList.length; ++i) {
-          resultObj.tit.push(typeList[i].typename)
-          let typeResult = await paymoneyApi.findSumCountByType(typeList[i].id)
-          if (typeResult.flag) {
-            let cur = {
-              value: typeResult.data || 0,
-              name: typeList[i].typename
-            }
-            resultObj.sData.push(cur)
+      var typeList = this.typeList
+      for (let i = 0; i < typeList.length; ++i) {
+        titArr.push(typeList[i].typename)
+        let typeResult = await paymoneyApi.findSumCountByType(typeList[i].id)
+        if (typeResult.flag) {
+          let cur = {
+            value: typeResult.data || 0,
+            name: typeList[i].typename
           }
+          arrObj.push(cur)
         }
       }
-      this.pieData = resultObj
+      this.pieData.tit = titArr
+      this.pieData.sData = arrObj
+    },
+    async getOwnerAllCosts() {
+      var titArr = []
+      var arrObjOwner = []
+      paymoneyApi.findSumCountOwner(this.UID).then( response => {
+          this.pieDataOwner.sum = response.data
+      })
+      var typeList = this.typeList
+      for (let i = 0; i < typeList.length; ++i) {
+        titArr.push(typeList[i].typename)
+        let typeResultOwner = await paymoneyApi.findSumCountByTypeOwner(this.UID, typeList[i].id)
+        if (typeResultOwner.flag) {
+          let curO = {
+            value: typeResultOwner.data || 0,
+            name: typeList[i].typename
+          }
+          arrObjOwner.push(curO)
+        }
+      }
+      this.pieDataOwner.tit = titArr
+      this.pieDataOwner.sData = arrObjOwner
     }
   }
 }

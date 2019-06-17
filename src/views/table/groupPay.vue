@@ -119,8 +119,6 @@
 
 <script>
 import paymoneyApi from "@/api/paymoney"
-import typeApi from "@/api/type"
-import userApi from "@/api/user"
 import { arrToStr, strToArr } from '@/utils'
 
 export default {
@@ -146,8 +144,8 @@ export default {
         typeList() {
            return this.$store.getters.typeArrs
         },
-        UName() {
-            return this.$store.getters.name
+        UID() {
+            return this.$store.getters.userid
         },
         roles() {
             return this.$store.getters.roles
@@ -155,7 +153,6 @@ export default {
     },
     created() {
         this.search()
-        this.findSumCount()
     },
     methods: {
         changePtUserFun(val) {
@@ -218,6 +215,7 @@ export default {
                 //console.log(response.data.rows)
                 this.total = response.data.total
             })
+            this.findSumCount()
         },
         currentPageSize(val){
             this.size = val
@@ -229,7 +227,7 @@ export default {
             })
         },
         clickable(row) {
-            return this.roles.indexOf('0')>-1 && this.UName!==row.payusername
+            return this.roles.indexOf('0')>-1 && this.UID!==row.payuserid
         }
     }
 }

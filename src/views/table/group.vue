@@ -1,7 +1,7 @@
 <template>
     <div>
          <el-form :inline="true" class="demo-form-inline">
-            <!--<el-form-item label="缴费类型">
+            <!--<el-form-item label="缴费群组">
                 <el-select v-model="searchMap.typeid" placeholder="请选择">
                     <el-option v-for="item in list" :key="item.id"
                                :label="item.typename" :value="item.id">
@@ -19,25 +19,35 @@
             </el-form-item>
         </el-form>
         <el-table :data="list" style="width: 100%">
-            <el-table-column prop="id" label="类型id"></el-table-column>
-            <el-table-column prop="typename" label="类型名称"></el-table-column>
+            <el-table-column prop="id" label="群组id"></el-table-column>
+            <el-table-column prop="groupname" label="群组名称"></el-table-column>
             <el-table-column label="创建人">
                 <template slot-scope="scope">
-                    {{scope.row.userid | uInfo}}
+                    {{scope.row.createuserid | uInfo}}
                 </template>
             </el-table-column>
             <el-table-column label="修改人">
                 <template slot-scope="scope">
-                    {{scope.row.updatetypeuid | uInfo}}
+                    {{scope.row.updateuserid | uInfo}}
+                </template>
+            </el-table-column>
+            <el-table-column label="群组成员">
+                <template slot-scope="scope">
+                    {{scope.row.groupmembers | uInfo}}
                 </template>
             </el-table-column>
             <el-table-column prop="createtime" label="创建时间"></el-table-column>
             <el-table-column prop="updatetime" label="修改时间"></el-table-column>
             <el-table-column prop="remark" label="备注"></el-table-column>
-            <el-table-column fixed="right" label="操作" :width="roles.indexOf('1')>-1?'150':'80'">
+            <el-table-column fixed="right" label="操作">
                 <template slot-scope="scope">
-                    <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
-                    <el-button v-if="roles.indexOf('1')>-1" @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
+                    <template v-if="UID===scope.row.createuserid">
+                        <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
+                        <el-button v-if="roles.indexOf('1')>-1" @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
+                    </template>
+                    <template v-else>
+                        <el-button @click="joinGroup(scope.row.id)" type="primary" size="mini">加入群组</el-button>
+                    </template>
                 </template>
             </el-table-column>
         </el-table>
@@ -60,16 +70,16 @@
         :visible.sync: 属性值是data里的一个属性,控制页面是否显示
         label-width="80px" : 描述信息和输入框在一行显示
     -->
-    <el-dialog title="新增缴费类型" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+    <el-dialog title="新增缴费群组" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
         <el-form label-width="100px">
-            <el-form-item label="类型名称" >
+            <el-form-item label="群组名称" >
                 <el-input v-model="pojo.typename" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item v-if="!id" label="创建人" prop="userid">{{name}}</el-form-item>
-            <el-form-item v-if="id" label="修改人" prop="updatetypeuid">{{name}}</el-form-item>
-            <el-form-item label="备注" >
-                <el-input v-model="pojo.remark" auto-complete="off"></el-input>
+            <el-form-item label="群组密钥" >
+                <el-input v-model="pojo.grouppwd" type="password" auto-complete="off"></el-input>
             </el-form-item>
+            <el-form-item v-if="!id" label="创建人" prop="createuserid">{{name}}</el-form-item>
+            <el-form-item v-if="id" label="修改人" prop="updateuserid">{{name}}</el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -80,7 +90,7 @@
 </template>
 
 <script>
-import typeApi from "@/api/type"
+import groupApi from "@/api/group"
 
 export default {
     data() {
@@ -110,14 +120,13 @@ export default {
         this.search()
     },
     methods: {
-        //保存新增活动
        saveOrUpdate() {
             if(this.id) {
                 this.pojo.updatetypeuid = this.UID
             }else{
                 this.pojo.userid = this.UID
             }            
-            typeApi.saveOrUpdate(this.id,this.pojo).then( response => {
+            groupApi.saveOrUpdate(this.id,this.pojo).then( response => {
                 this.$message({
                     showClose: true,
                     message: response.message,
@@ -133,7 +142,7 @@ export default {
         },
         findById(id) {
             this.id = id;
-            typeApi.findById(id).then(response => {
+            groupApi.findById(id).then(response => {
                 this.pojo = response.data;
                 this.dialogFormVisible = true
             })
@@ -145,7 +154,7 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
             }).then(() => {  //点击确定,进入then()方法,删除活动
-                typeApi.deleteById(id).then( response => {
+                groupApi.deleteById(id).then( response => {
                     this.$message({
                         showClose: true,
                         message: response.message,
@@ -160,7 +169,7 @@ export default {
         },
         //分页查询的方法
         search() {
-            typeApi.search(this.page,this.size).then( response => {
+            groupApi.search(this.page,this.size).then( response => {
                 this.list = response.data.rows //获取列表数据
                 this.total = response.data.total
             })

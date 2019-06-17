@@ -59,7 +59,7 @@ export default {
     setOptions(pieData) {
       this.chart.setOption({
         title: {
-          text: '总支出：￥' + pieData.sum,
+          text: pieData.topic + '：￥' + pieData.sum,
           textStyle: {
             color: '#333',
             fontSize: 14
@@ -83,19 +83,23 @@ export default {
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
-            center: ['50%', '38%'],
+            center: ['50%', '46%'],
             data: pieData.sData,
             animationEasing: 'cubicInOut',
             animationDuration: 2600,
+            // label: {
+            //     normal: {
+            //         show: false
+            //     }
+            // },
             itemStyle: {
               normal: {
                 label: {
                   show: true,
                   formatter: '{b} : ￥{c} ({d}%)'
-                },
-                labelLine: { show: true }
+                }
               }
-            },
+            }
           }
         ]
       })

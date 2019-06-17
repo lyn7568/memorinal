@@ -114,6 +114,7 @@ export default {
                 if(response.flag){
                     this.dialogFormVisible = false  //关闭弹出框
                     this.search()             //再次加载活动列表
+                    this.$store.dispatch('getDictuList')
                 }
             })       
         },
@@ -139,6 +140,7 @@ export default {
                         });
                     if(response.flag){
                         this.search() ;    //如果删除执行成功,重新加载页面
+                        this.$store.dispatch('getDictuList')
                     }
                 })  
             })  

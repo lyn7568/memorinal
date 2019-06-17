@@ -16,6 +16,8 @@ Vue.filter('uInfo', function(val) {
     for (let i = 0; i < arr.length; i++) {
       labV.push(userLoop(uList, arr[i]))
     }
+  } else {
+    labV.push('无')
   }
   return arrToStr(labV)
 })

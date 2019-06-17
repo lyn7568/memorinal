@@ -44,16 +44,28 @@ export const constantRouterMap = [
     meta: { title: '缴费详情', icon: 'table' },
     children: [
       {
-        path: 'group',
+        path: 'groupPay',
         name: 'groupPay',
         component: () => import('@/views/table/groupPay'),
         meta: { title: '群组缴费' }
       },
       {
-        path: 'owner',
+        path: 'ownerPay',
         name: 'ownerPay',
         component: () => import('@/views/table/ownerPay'),
         meta: { title: '个人缴费' }
+      }
+    ]
+  },
+  {
+    path: '/group',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'group',
+        component: () => import('@/views/table/group'),
+        meta: { title: '缴费群组', icon: 'group' }
       }
     ]
   },

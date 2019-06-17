@@ -90,8 +90,6 @@
 
 <script>
 import paymoneyApi from "@/api/paymoney"
-import typeApi from "@/api/type"
-import userApi from "@/api/user"
 
 export default {
     data() {
@@ -118,20 +116,16 @@ export default {
         UID() {
             return this.$store.getters.userid
         },
-        UName() {
-            return this.$store.getters.name
-        },
         roles() {
             return this.$store.getters.roles
         }
     },
     created() {
         this.search()
-        this.findSumCount()
     },
     methods: {
         findSumCount() {
-            paymoneyApi.findSumCountOwner().then( response => {
+            paymoneyApi.findSumCountOwner(this.UID).then( response => {
                 this.sumCount = response.data;
             })
         },
@@ -184,6 +178,7 @@ export default {
                 //console.log(response.data.rows)
                 this.total = response.data.total
             })
+            this.findSumCount()
         },
         currentPageSize(val){
             this.size = val
