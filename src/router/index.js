@@ -53,7 +53,8 @@ export const constantRouterMap = [
         path: 'groupItem',
         name: 'groupItem',
         hidden: true,
-        component: () => import('@/views/table/groupItem')
+        component: () => import('@/views/table/groupItem'),
+        meta: { title: '群组名称' }
       },
       {
         path: 'ownerPay',

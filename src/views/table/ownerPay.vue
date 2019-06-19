@@ -1,20 +1,27 @@
 <template>
     <div>
         <el-form :inline="true" class="demo-form-inline">
-            <!--<el-form-item label="缴费类型">
-                <el-select v-model="searchMap.typeid" placeholder="请选择">
+            <el-form-item>
+                <el-select clearable v-model="searchTypeid" placeholder="请选择缴费类型">
                     <el-option v-for="item in typeList" :key="item.id"
                                :label="item.typename" :value="item.id">
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="选择缴费时间">
-                <el-date-picker v-model="searchMap.createtime" type="date" placeholder="选择日期"></el-date-picker>
+            <el-form-item>
+                <el-date-picker clearable
+                    v-model="rangeTime"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    value-format="yyyy-MM-dd"
+                    @change="changeFun">
+                </el-date-picker>
             </el-form-item>
-             <el-form-item >
+            <el-form-item >
                 <el-button type="primary" @click="search()">查询</el-button>
-            </el-form-item>-->
-            
+            </el-form-item>
             <el-form-item >
                 <el-button type="primary" @click="dialogFormVisible = true;pojo={};id=null">新增</el-button>
             </el-form-item>
@@ -94,7 +101,10 @@ export default {
     data() {
         return {
             list:null,
-            searchMap:{},
+            searchTypeid: '',
+            rangeTime: '',
+            startTime: '',
+            endTime: '',
             moneyList:null,
             dialogFormVisible :false,
             pojo:{},
@@ -123,6 +133,12 @@ export default {
         this.search()
     },
     methods: {
+        changeFun(val) {
+            if (val) {
+                this.startTime = val[0]
+                this.endTime = val[1]
+            }
+        },
         findSumCount() {
             paymoneyApi.findSumCountOwner(this.UID).then( response => {
                 this.sumCount = response.data;
@@ -172,7 +188,14 @@ export default {
         },
          //分页查询的方法
         search() {
-            paymoneyApi.searchOwner(this.UID, this.page,this.size).then( response => {
+            paymoneyApi.searchOwner({
+              userid: this.UID,
+              typeid: this.searchTypeid,
+              startTime: this.startTime,
+              endTime: this.endTime,
+              page: this.page,
+              size: this.size
+            }).then( response => {
                 this.list = response.data.rows //获取列表数据
                 //console.log(response.data.rows)
                 this.total = response.data.total

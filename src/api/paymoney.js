@@ -36,29 +36,31 @@ export default {
       method: 'delete'
     })
   },
-  search: function(groupid,page, size) {
+  findSearch: function(data) {
     return request({
-      url: `/paymoney/search/${groupid}/${page}/${size}`,
-      method: 'post'
+      url: `/paymoney/findSearch`,
+      method: 'post',
+      data: data
     })
   },
-  findSumCount: function() {
+  findSumCount: function(groupid) {
     return request({
-      url: `/paymoney/sum`,
+      url: `paymoney/sumPayMoneyByGroupid/${groupid}`,
       method: 'get'
     })
   },
-  findSumCountByType: function(typeid) {
+  findSumCountByType: function(groupid, typeid) {
     return request({
-      url: `/paymoney/sum/${typeid}`,
+      url: `/paymoney/sumPayMoneyByGroupidAndTypeid/${groupid}/${typeid}`,
       method: 'get'
     })
   },
 
-  searchOwner: function(userid, page, size) {
+  searchOwner: function(data) {
     return request({
-      url: `/indivpaymoney/search/${userid}/${page}/${size}`,
-      method: 'post'
+      url: `/indivpaymoney/findSearch`,
+      method: 'post',
+      data: data
     })
   },
   saveOwner: function(pojo) {

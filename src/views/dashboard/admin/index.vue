@@ -13,12 +13,12 @@
           <raddar-chart></raddar-chart>
         </div>
       </el-col> -->
-      <el-col :xs="24" :sm="24" :lg="12">
+      <!-- <el-col :xs="24" :sm="24" :lg="12">
         <div class="chart-wrapper">
           <pie-chart :pieData="pieData"></pie-chart>
         </div>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="12">
+      </el-col> -->
+      <el-col :xs="24" :sm="24" :lg="24">
         <div class="chart-wrapper">
           <pie-chart :pieData="pieDataOwner"></pie-chart>
         </div>
@@ -116,7 +116,7 @@ export default {
     }
   },
   created() {
-    this.getGroupAllCosts()
+    // this.getGroupAllCosts()
     this.getOwnerAllCosts()
   },
   methods: {

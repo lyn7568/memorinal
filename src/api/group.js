@@ -47,5 +47,11 @@ export default {
       method: 'post',
       data: dataS
     })
+  },
+  findAllUserById: function (groupid) {
+    return request({
+      url: `/group/findAllUserById/${groupid}`,
+      method: 'post'
+    })
   }
 }

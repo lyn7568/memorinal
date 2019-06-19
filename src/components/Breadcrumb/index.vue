@@ -26,7 +26,17 @@ export default {
   },
   methods: {
     getBreadcrumb() {
-      let matched = this.$route.matched.filter(item => item.name)
+      const groupName = sessionStorage.getItem('GROUPName')
+      let matched = this.$route.matched.filter(item => {
+        if (groupName && item.name === 'groupItem') {
+          item.meta.title = groupName
+        }
+        return item.name
+      })
+      if (matched.length === 2) {
+        matched = [{ name: 'groupItem', meta: { title: groupName }}].concat(matched)
+      }
+      // let matched = this.$route.matched.filter(item => item.name)
       const first = matched[0]
       if (first && first.name !== 'dashboard') {
         matched = [{ path: '/dashboard', meta: { title: '首页' }}].concat(matched)

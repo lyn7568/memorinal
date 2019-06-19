@@ -38,7 +38,7 @@
             <el-table-column prop="createtime" label="创建时间"></el-table-column>
             <el-table-column prop="updatetime" label="修改时间"></el-table-column>
             <el-table-column prop="remark" label="备注"></el-table-column>
-            <el-table-column fixed="right" label="操作">
+            <el-table-column fixed="right" label="操作" width="240">
                 <template slot-scope="scope">
                     <template v-if="UID===scope.row.createuserid">
                         <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>

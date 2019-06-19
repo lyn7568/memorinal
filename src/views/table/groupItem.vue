@@ -1,19 +1,34 @@
 <template>
     <div>
         <el-form :inline="true" class="demo-form-inline">
-            <!--<el-form-item label="缴费类型">
-                <el-select v-model="searchMap.typeid" placeholder="请选择">
+            <el-form-item>
+                <el-select clearable v-model="searchMap.typeid" placeholder="请选择缴费类型">
                     <el-option v-for="item in typeList" :key="item.id"
                                :label="item.typename" :value="item.id">
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="选择缴费时间">
-                <el-date-picker v-model="searchMap.createtime" type="date" placeholder="选择日期"></el-date-picker>
+            <el-form-item>
+                <el-select clearable v-model="searchMap.payuserid" placeholder="请选择缴费人">
+                    <el-option v-for="item in userListGroup" :key="item.id"
+                                :label="item.username" :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item>
+                <el-date-picker clearable
+                    v-model="searchMap.rangeTime"
+                    type="daterange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    value-format="yyyy-MM-dd"
+                    @change="changeFun">
+                </el-date-picker>
             </el-form-item>
              <el-form-item >
                 <el-button type="primary" @click="search()">查询</el-button>
-            </el-form-item>-->
+            </el-form-item>
             
             <el-form-item >
                 <el-button type="primary" @click="dialogFormVisible = true;pojo={};id=null">新增</el-button>
@@ -76,7 +91,7 @@
                         :value : 存放城市的id
                         :key : 也是对应的id
                     -->
-                    <el-option v-for="item in userList" :key="item.id"
+                    <el-option v-for="item in userListGroup" :key="item.id"
                                 :label="item.username" :value="item.id">
                     </el-option>
                 </el-select>
@@ -96,7 +111,7 @@
             <el-form-item label="平摊人" >
                 <el-select v-model="ptUserArr" multiple placeholder="请选择"
                     @change="changePtUserFun">
-                    <el-option v-for="item in userList" :key="item.id"
+                    <el-option v-for="item in userListGroup" :key="item.id"
                                 :label="item.username" :value="item.id">
                     </el-option>
                 </el-select>
@@ -118,6 +133,7 @@
 
 <script>
 import paymoneyApi from "@/api/paymoney"
+import groupApi from "@/api/group"
 import { arrToStr, strToArr } from '@/utils'
 
 export default {
@@ -125,7 +141,14 @@ export default {
         return {
             groupid: '',
             list:null,
-            searchMap:{},
+            searchMap:{
+                typeid: '',
+                payuserid: '',
+                rangeTime: ''
+            },
+            userListGroup: [],
+            startTime: '',
+            endTime: '',
             moneyList:null,
             dialogFormVisible :false,
             pojo:{},
@@ -138,9 +161,9 @@ export default {
         }
     },
     computed: {
-        userList() {
-           return this.$store.getters.uListArrs 
-        },
+        // userList() {
+        //    return this.$store.getters.uListArrs 
+        // },
         typeList() {
            return this.$store.getters.typeArrs
         },
@@ -155,9 +178,21 @@ export default {
         if (this.$route.query.id) {
             this.groupid = this.$route.query.id
             this.search()
+            this.findAllUserById()
         }
     },
     methods: {
+        changeFun(val) {
+            if (val) {
+                this.startTime = val[0]
+                this.endTime = val[1]
+            }
+        },
+        findAllUserById() {
+            groupApi.findAllUserById(this.groupid).then(response => {
+                this.userListGroup = response.data;
+            })
+        },
         changePtUserFun(val) {
             this.ptUserArr = val
             this.pojo.sharemoney = (Number(this.pojo.paycount) / val.length).toFixed(2)
@@ -213,9 +248,16 @@ export default {
         },
          //分页查询的方法
         search() {
-            paymoneyApi.search(this.groupid,this.page,this.size).then( response => {
-                this.list = response.data.rows //获取列表数据
-                //console.log(response.data.rows)
+            paymoneyApi.findSearch({
+              groupid: this.groupid,
+              payuserid: this.searchMap.payuserid,
+              typeid: this.searchMap.typeid,
+              startTime: this.startTime,
+              endTime: this.endTime,
+              page: this.page,
+              size: this.size
+            }).then( response => {
+                this.list = response.data.rows
                 this.total = response.data.total
             })
             this.findSumCount()
@@ -225,7 +267,7 @@ export default {
             this.search()
         },
         findSumCount() {
-            paymoneyApi.findSumCount().then( response => {
+            paymoneyApi.findSumCount(this.groupid).then( response => {
                 this.sumCount = response.data;
             })
         },

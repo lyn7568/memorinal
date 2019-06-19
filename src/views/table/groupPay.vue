@@ -1,11 +1,14 @@
 <template>
-    <el-row :gutter="16">
+  <div>
+    <el-row :gutter="16" v-if="pojo && pojo.length">
       <el-col :xs="12" :sm="8" :lg="8" v-for="item in pojo" :key="item.index">
-        <el-card shadow="always" @click.native="clickCurGroup(item.id)" style="margin: 8px 0">
+        <el-card shadow="always" @click.native="clickCurGroup(item)" style="margin: 8px 0">
             {{item.groupname}}
         </el-card>
       </el-col>
     </el-row>
+    <div v-else style="font-size:13px;text-align:center;line-height:100px;color: #999">暂无群组数据</div>
+  </div>
 </template>
 
 <script>
@@ -31,11 +34,12 @@ export default {
                 this.pojo = response.data;
             })
         },
-        clickCurGroup(id) {
+        clickCurGroup(val) {
+            sessionStorage.setItem('GROUPName', val.groupname)
             this.$router.push({
                 name: 'groupItem',
                 query: {
-                    id: id
+                    id: val.id
                 }
             })
         }
