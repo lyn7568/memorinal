@@ -1,5 +1,8 @@
 <template>
     <div>
+        <div class="chart-wrapper" v-if ="sumCount">
+          <pie-chart :pieData="pieDataGroup"></pie-chart>
+        </div>
         <el-form :inline="true" class="demo-form-inline">
             <el-form-item>
                 <el-select clearable v-model="searchMap.typeid" placeholder="请选择缴费类型">
@@ -32,9 +35,6 @@
             
             <el-form-item >
                 <el-button type="primary" @click="dialogFormVisible = true;pojo={};id=null">新增</el-button>
-            </el-form-item>
-            <el-form-item >
-                总金额: ￥{{sumCount}}
             </el-form-item>
         </el-form>
         <el-table :data="list">
@@ -134,12 +134,20 @@
 <script>
 import paymoneyApi from "@/api/paymoney"
 import groupApi from "@/api/group"
+import PieChart from '@/components/ECharts/PieChart'
 import { arrToStr, strToArr } from '@/utils'
 
 export default {
     data() {
         return {
             groupid: '',
+            pieDataGroup: {
+                topic: '当前群组缴费',
+                subTopic: '本人均摊缴费： ￥0',
+                sum: 0,
+                tit: [],
+                sData: []
+            },
             list:null,
             searchMap:{
                 typeid: '',
@@ -159,6 +167,9 @@ export default {
             sumCount:0,
             ptUserArr: []
         }
+    },
+    components: {
+        PieChart
     },
     computed: {
         // userList() {
@@ -260,21 +271,52 @@ export default {
                 this.list = response.data.rows
                 this.total = response.data.total
             })
-            this.findSumCount()
+            this.getGroupAllCosts()
         },
         currentPageSize(val){
             this.size = val
             this.search()
         },
-        findSumCount() {
-            paymoneyApi.findSumCount(this.groupid).then( response => {
-                this.sumCount = response.data;
-            })
-        },
         clickable(row) {
             return this.roles.indexOf('0')>-1 && this.UID!==row.payuserid
+        },
+        async getGroupAllCosts() {
+            var titArr = []
+            var arrObj = []
+            paymoneyApi.findSumCount(this.groupid).then( response => {
+                if (response.flag && response.data) {
+                    this.pieDataGroup.sum = response.data
+                    this.sumCount = response.data
+                }
+            })
+            paymoneyApi.findSumCountShareByUser(this.groupid, this.UID).then( response => {
+                if (response.flag && response.data) {
+                    this.pieDataGroup.subTopic = '本人均摊缴费： ￥' + response.data
+                }
+            })
+            var typeList = this.typeList
+            for (let i = 0; i < typeList.length; ++i) {
+                let typeResult = await paymoneyApi.findSumCountByType(this.groupid,typeList[i].id)
+                if (typeResult.flag && typeResult.data) {
+                    titArr.push(typeList[i].typename)
+                    let cur = {
+                        value: typeResult.data || 0,
+                        name: typeList[i].typename
+                    }
+                    arrObj.push(cur)
+                }
+            }
+            this.pieDataGroup.tit = titArr
+            this.pieDataGroup.sData = arrObj
         }
     }
+        
 }
 </script>
 
+<style scoped>
+    .chart-wrapper{
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 20px;
+    }
+</style>

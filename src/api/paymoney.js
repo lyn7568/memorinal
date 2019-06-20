@@ -55,6 +55,19 @@ export default {
       method: 'get'
     })
   },
+  // 查询某用户在某群组中分摊的总金额
+  findSumCountShareByUser: function(groupid, userid) {
+    return request({
+      url: `paymoney/sumPayMoneyByUseridAndGroupid/${groupid}/${userid}`,
+      method: 'get'
+    })
+  },
+  findSumCountShareByTypeUser: function(groupid, typeid, userid) {
+    return request({
+      url: `/paymoney/sumPayMoneyByGroupidAndTypeidAndUserid/${groupid}/${typeid}/${userid}`,
+      method: 'get'
+    })
+  },
 
   searchOwner: function(data) {
     return request({

@@ -60,6 +60,7 @@ export default {
       this.chart.setOption({
         title: {
           text: pieData.topic + '：￥' + pieData.sum,
+          subtext: pieData.subTopic ? pieData.subTopic : '',
           textStyle: {
             color: '#333',
             fontSize: 14

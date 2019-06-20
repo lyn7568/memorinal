@@ -53,7 +53,7 @@ import paymoneyApi from "@/api/paymoney"
 // import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
 // import RaddarChart from './components/RaddarChart'
-import PieChart from './components/PieChart'
+import PieChart from '@/components/ECharts/PieChart'
 import BarChart from './components/BarChart'
 // import TransactionTable from './components/TransactionTable'
 // import TodoList from './components/TodoList'
@@ -127,7 +127,7 @@ export default {
       var titArr = []
       var arrObj = []
       paymoneyApi.findSumCount().then( response => {
-          this.pieData.sum = response.data
+          this.pieData.sum = response.data || 0
       })
       var typeList = this.typeList
       for (let i = 0; i < typeList.length; ++i) {

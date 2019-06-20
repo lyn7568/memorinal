@@ -23,6 +23,7 @@ export default {
     ])
   },
   created() {
+    this.$router.push({ name: 'groupPay' })
     // if (this.roles.indexOf('1') > -1) {
     //   this.currentRole = 'adminDashboard'
     // } else {
