@@ -25,5 +25,9 @@ new Vue({
   router,
   store,
   template: '<App/>',
-  components: { App }
+  components: { App },
+  created() {
+    this.$store.dispatch('getDictuList')
+    this.$store.dispatch('getDictType')
+  }
 })
