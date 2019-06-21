@@ -57,7 +57,7 @@
             <el-table-column prop="sharemoney" label="均摊金额"></el-table-column>
             <el-table-column prop="paytime" label="缴费日期"></el-table-column>
             <el-table-column prop="remark" label="缴费备注"></el-table-column>
-            <el-table-column fixed="right" label="操作" width="150">
+            <el-table-column fixed="right" label="操作" align="center" width="150">
                 <template slot-scope="scope">
                     <el-button @click="findById(scope.row.id)" type="primary" size="mini" :disabled="clickable(scope.row)">修改</el-button>
                     <el-button @click="deleteById(scope.row.id)" type="danger" size="mini" :disabled="clickable(scope.row)">删除</el-button>

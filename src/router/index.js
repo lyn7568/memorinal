@@ -87,18 +87,6 @@ export const constantRouterMap = [
         meta: { title: '缴费类型', icon: 'form' }
       }
     ]
-  },
-  {
-    path: '/user',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'User',
-        component: () => import('@/views/table/user'),
-        meta: { title: '缴费用户', icon: 'peoples' }
-      }
-    ]
   }
 ]
 
@@ -109,6 +97,21 @@ export default new Router({
 })
 
 export const asyncRouterMap = [
+  {
+    path: '/user',
+    component: Layout,
+    meta: {
+      roles: ['1']
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'User',
+        component: () => import('@/views/table/user'),
+        meta: { title: '缴费用户', icon: 'peoples' }
+      }
+    ]
+  },
   {
     path: '/personal',
     component: Layout,

@@ -81,6 +81,7 @@ export default {
         border: 1px solid #e4e5e7;
         .project-index-header {
             font-size: 16px;
+            font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;

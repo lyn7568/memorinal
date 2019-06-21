@@ -1,6 +1,6 @@
 <template>
     <div>
-         <el-form :inline="true" class="demo-form-inline">
+         <el-form :inline="true" class="demo-form-inline"  v-if="roles.indexOf('1')>-1">
             <!--<el-form-item label="缴费类型">
                 <el-select v-model="searchMap.typeid" placeholder="请选择">
                     <el-option v-for="item in list" :key="item.id"
@@ -19,24 +19,14 @@
             </el-form-item>
         </el-form>
         <el-table :data="list" style="width: 100%">
-            <el-table-column prop="typename" label="类型名称"></el-table-column>
-            <el-table-column label="创建人">
-                <template slot-scope="scope">
-                    {{scope.row.userid | uInfo}}
-                </template>
-            </el-table-column>
-            <el-table-column label="修改人">
-                <template slot-scope="scope">
-                    {{scope.row.updatetypeuid | uInfo}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="createtime" label="创建时间"></el-table-column>
-            <el-table-column prop="updatetime" label="修改时间"></el-table-column>
-            <el-table-column prop="remark" label="备注"></el-table-column>
-            <el-table-column fixed="right" label="操作" :width="roles.indexOf('1')>-1?'150':'80'">
+            <el-table-column prop="typename" label="类型名称" with="50"></el-table-column>
+            <el-table-column prop="createtime" label="创建时间" with="280"></el-table-column>
+            <el-table-column prop="updatetime" label="修改时间" with="280"></el-table-column>
+            <el-table-column prop="remark" label="备注" with="320"></el-table-column>
+            <el-table-column fixed="right" label="操作" align="center" with="150" v-if="roles.indexOf('1')>-1">
                 <template slot-scope="scope">
                     <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
-                    <el-button v-if="roles.indexOf('1')>-1" @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
+                    <el-button @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
