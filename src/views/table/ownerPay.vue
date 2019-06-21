@@ -161,7 +161,8 @@ export default {
                 //保存成功(flag=true),关闭弹出框,并刷新列表
                 if(response.flag){
                     this.dialogFormVisible = false  //关闭弹出框
-                    this.search()              //再次加载活动列表
+                    this.search()
+                    this.getOwnerAllCosts()
                 }
             })       
         },
@@ -184,7 +185,8 @@ export default {
                         type: response.flag?'success':'error'
                         });
                     if(response.flag){
-                        this.search() ;    //如果删除执行成功,重新加载页面
+                        this.search()
+                        this.getOwnerAllCosts()
                     }
                 })  
             })  
@@ -203,7 +205,6 @@ export default {
                 //console.log(response.data.rows)
                 this.total = response.data.total
             })
-            this.getOwnerAllCosts()
         },
         currentPageSize(val){
             this.size = val

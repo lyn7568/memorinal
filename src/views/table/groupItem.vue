@@ -106,7 +106,7 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="缴费金额" >
-                <el-input v-model="pojo.paycount" auto-complete="off"></el-input>
+                <el-input v-model="pojo.paycount" auto-complete="off" @change="changePtAllCostFun"></el-input>
             </el-form-item>
             <el-form-item label="平摊人" >
                 <el-select v-model="ptUserArr" multiple placeholder="请选择"
@@ -190,6 +190,7 @@ export default {
             this.groupid = this.$route.query.id
             this.search()
             this.findAllUserById()
+            this.getGroupAllCosts()
         }
     },
     methods: {
@@ -204,9 +205,21 @@ export default {
                 this.userListGroup = response.data;
             })
         },
+        changePtAllCostFun(val) {
+            console.log(val)
+            this.pojo.paycount = val
+            this.countPtpay()
+        },
         changePtUserFun(val) {
             this.ptUserArr = val
-            this.pojo.sharemoney = (Number(this.pojo.paycount) / val.length).toFixed(2)
+            this.countPtpay()
+        },
+        countPtpay() {
+            if (this.ptUserArr.length) {
+                this.pojo.sharemoney = (Number(this.pojo.paycount) / this.ptUserArr.length).toFixed(2)
+            } else {
+               this.pojo.sharemoney = Number(this.pojo.paycount)
+            }
         },
         fetchData() {
             paymoneyApi.getList().then(response => {
@@ -215,6 +228,7 @@ export default {
         },
         //保存新增活动
         saveOrUpdate() {
+            this.pojo.groupid = this.groupid
             this.pojo.shareuserid = arrToStr(this.ptUserArr)
             paymoneyApi.saveOrUpdate(this.id,this.pojo).then( response => {
                 this.$message({
@@ -225,7 +239,8 @@ export default {
                 //保存成功(flag=true),关闭弹出框,并刷新列表
                 if(response.flag){
                     this.dialogFormVisible = false  //关闭弹出框
-                    this.search()              //再次加载活动列表
+                    this.search()
+                    this.getGroupAllCosts()
                 }
             })       
         },
@@ -252,7 +267,8 @@ export default {
                         type: response.flag?'success':'error'
                         });
                     if(response.flag){
-                        this.search() ;    //如果删除执行成功,重新加载页面
+                        this.search()
+                        this.getGroupAllCosts()
                     }
                 })  
             })  
@@ -271,7 +287,6 @@ export default {
                 this.list = response.data.rows
                 this.total = response.data.total
             })
-            this.getGroupAllCosts()
         },
         currentPageSize(val){
             this.size = val
