@@ -141,6 +141,7 @@ export default {
     },
     created() {
         this.search()
+        this.getOwnerAllCosts()
     },
     methods: {
         changeFun(val) {

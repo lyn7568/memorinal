@@ -47,6 +47,16 @@
                     <template v-else>
                         <el-button @click="joinGroup(scope.row.id)" :disabled="ifBeyondGroup(scope.row)" :type="ifBeyondGroup(scope.row)?'info':'primary'" size="mini">{{ifBeyondGroup(scope.row)?'已加入':'加入群组'}}</el-button>
                     </template>
+                    <el-popover v-if="UID===scope.row.createuserid || ifBeyondGroup(scope.row) && scope.row.userGs"
+                        placement="left-start" width="500" trigger="click">
+                        <el-table :data="scope.row.userGs">
+                            <el-table-column property="username" label="姓名"></el-table-column>
+                            <el-table-column property="telno" label="电话"></el-table-column>
+                            <el-table-column property="addr" label="籍贯"></el-table-column>
+                            <el-table-column property="remark" label="备注"></el-table-column>
+                        </el-table>
+                        <el-button slot="reference" type="primary" size="mini">查看组员信息</el-button>
+                    </el-popover>
                 </template>
             </el-table-column>
         </el-table>
@@ -74,7 +84,7 @@
             <el-form-item label="群组名称" >
                 <el-input v-model="pojo.groupname"></el-input>
             </el-form-item>
-            <el-form-item label="群组密钥" >
+            <el-form-item v-if="!id" label="群组密钥" >
                 <el-input v-model="pojo.grouppwd" type="password"></el-input>
             </el-form-item>
             <el-form-item v-if="!id" label="创建人" prop="createuserid">{{name}}</el-form-item>
@@ -128,8 +138,8 @@ export default {
                 this.pojo.updateuserid = this.UID
             }else{
                 this.pojo.createuserid = this.UID
+                this.pojo.groupmembers = this.UID
             }
-            this.pojo.groupmembers = this.UID     
             groupApi.saveOrUpdate(this.id,this.pojo).then( response => {
                 this.$message({
                     showClose: true,
@@ -140,7 +150,6 @@ export default {
                 if(response.flag){
                     this.dialogFormVisible = false  //关闭弹出框
                     this.search()              //再次加载活动列表
-                    this.$store.dispatch('getDictType')
                 }
             })       
         },
@@ -172,11 +181,22 @@ export default {
             })  
         },
         //分页查询的方法
-        search() {
-            groupApi.search(this.page,this.size).then( response => {
-                this.list = response.data.rows //获取列表数据
-                this.total = response.data.total
-            })
+        async search() {
+            let response = await groupApi.search(this.page,this.size)
+            if (response.flag && response.data) {
+                const $info = response.data.rows
+                if ( $info.length > 0){
+                    for (let i = 0; i < $info.length; ++i) {
+                        $info[i].userGs = [];
+                        let res = await groupApi.findAllUserById($info[i].id)
+                        if (res.flag && res.data) {
+                            $info[i].userGs = res.data
+                        }
+                    }
+                    this.list = $info
+                    this.total = response.data.total
+                }
+            }
         },
         currentPageSize(val){
             this.size = val
