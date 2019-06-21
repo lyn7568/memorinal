@@ -84,6 +84,8 @@ export default {
             that.$store.dispatch('GenerateRoutes', { roles }).then(() => {
               that.$router.addRoutes(that.$store.getters.addRouters)
               that.$router.push({ path: '/' })
+              that.$store.dispatch('getDictuList')
+              that.$store.dispatch('getDictType')
             })
             that.loading = false
           }).catch(() => {
