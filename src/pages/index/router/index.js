@@ -22,9 +22,9 @@ import Layout from '../views/layout/Layout'
   }
 **/
 export const constantRouterMap = [
-  { path: '/login', component: () => import('@/views/login/index'), hidden: true },
-  { path: '/404', component: () => import('@/views/404'), hidden: true },
-  { path: '/401', component: () => import('@/views/401'), hidden: true },
+  { path: '/login', component: resolve => require(['../views/login/index'], resolve), hidden: true },
+  { path: '/404', component: resolve => require(['../views/404'], resolve), hidden: true },
+  { path: '/401', component: resolve => require(['../views/401'], resolve), hidden: true },
 
   {
     path: '/',
@@ -34,7 +34,7 @@ export const constantRouterMap = [
     hidden: true,
     children: [{
       path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
+      component: resolve => require(['../views/dashboard/index'], resolve)
     }]
   },
   {
@@ -46,20 +46,20 @@ export const constantRouterMap = [
       {
         path: 'groupPay',
         name: 'groupPay',
-        component: () => import('@/views/table/groupPay'),
+        component: resolve => require(['../views/table/groupPay'], resolve),
         meta: { title: '群组缴费' }
       },
       {
         path: 'groupItem',
         name: 'groupItem',
         hidden: true,
-        component: () => import('@/views/table/groupItem'),
+        component: resolve => require(['../views/table/groupItem'], resolve),
         meta: { title: '群组名称' }
       },
       {
         path: 'ownerPay',
         name: 'ownerPay',
-        component: () => import('@/views/table/ownerPay'),
+        component: resolve => require(['../views/table/ownerPay'], resolve),
         meta: { title: '个人缴费' }
       }
     ]
@@ -71,7 +71,7 @@ export const constantRouterMap = [
       {
         path: 'index',
         name: 'group',
-        component: () => import('@/views/table/group'),
+        component: resolve => require(['../views/table/group'], resolve),
         meta: { title: '缴费群组', icon: 'group' }
       }
     ]
@@ -83,7 +83,7 @@ export const constantRouterMap = [
       {
         path: 'index',
         name: 'Type',
-        component: () => import('@/views/table/type'),
+        component: resolve => require(['../views/table/type'], resolve),
         meta: { title: '缴费类型', icon: 'form' }
       }
     ]
@@ -107,7 +107,7 @@ export const asyncRouterMap = [
       {
         path: 'index',
         name: 'User',
-        component: () => import('@/views/table/user'),
+        component: resolve => require(['../views/table/user'], resolve),
         meta: { title: '缴费用户', icon: 'peoples' }
       }
     ]
@@ -125,13 +125,13 @@ export const asyncRouterMap = [
       {
         path: 'index',
         name: 'update',
-        component: () => import('@/views/personal/update'),
+        component: resolve => require(['../views/personal/update'], resolve),
         meta: { title: '修改资料' }
       },
       {
         path: 'pwd',
         name: 'changePwd',
-        component: () => import('@/views/personal/changePwd'),
+        component: resolve => require(['../views/personal/changePwd'], resolve),
         meta: { title: '修改密码' }
       }
     ]
