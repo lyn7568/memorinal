@@ -36,12 +36,25 @@ export const constantRouterMap = [
       path: 'dashboard',
       component: resolve => require(['../views/dashboard/index'], resolve)
     }]
-  },
+  }
+]
+
+export default new Router({
+  // mode: 'history', //后端支持可开
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouterMap
+})
+
+export const asyncRouterMap = [
   {
     path: '/paymoney',
     component: Layout,
     // alwaysShow: true,
-    meta: { title: '缴费详情', icon: 'table' },
+    meta: {
+      title: '缴费详情',
+      icon: 'table',
+      roles: ['0']
+    },
     children: [
       {
         path: 'groupPay',
@@ -67,6 +80,9 @@ export const constantRouterMap = [
   {
     path: '/group',
     component: Layout,
+    meta: {
+      roles: ['0','1']
+    },
     children: [
       {
         path: 'index',
@@ -79,6 +95,9 @@ export const constantRouterMap = [
   {
     path: '/type',
     component: Layout,
+    meta: {
+      roles: ['0','1']
+    },
     children: [
       {
         path: 'index',
@@ -87,16 +106,7 @@ export const constantRouterMap = [
         meta: { title: '缴费类型', icon: 'form' }
       }
     ]
-  }
-]
-
-export default new Router({
-  // mode: 'history', //后端支持可开
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
-})
-
-export const asyncRouterMap = [
+  },
   {
     path: '/user',
     component: Layout,

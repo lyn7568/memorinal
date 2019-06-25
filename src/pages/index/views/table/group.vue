@@ -40,20 +40,31 @@
             <el-table-column prop="remark" label="备注"></el-table-column>
             <el-table-column fixed="right" label="操作" align="center" with="180">
                 <template slot-scope="scope">
-                    <template v-if="UID===scope.row.createuserid">
-                        <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
+                    <template v-if="roles.indexOf('1')>-1">
                         <el-button @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
                     </template>
                     <template v-else>
-                        <el-button @click="joinGroup(scope.row.id)" :disabled="ifBeyondGroup(scope.row)" :type="ifBeyondGroup(scope.row)?'info':'primary'" size="mini">{{ifBeyondGroup(scope.row)?'已加入':'加入群组'}}</el-button>
+                        <template v-if="UID===scope.row.createuserid">
+                            <el-button @click="findById(scope.row.id)" type="primary" size="mini">修改</el-button>
+                            <el-button @click="deleteById(scope.row.id)" type="danger" size="mini">删除</el-button>
+                        </template>
+                        <template v-else>
+                            <el-button @click="joinGroup(scope.row.id)" :disabled="ifBeyondGroup(scope.row)" :type="ifBeyondGroup(scope.row)?'info':'primary'" size="mini">{{ifBeyondGroup(scope.row)?'已加入':'加入群组'}}</el-button>
+                            <el-button v-if="ifBeyondGroup(scope.row)" @click="outById(UID,scope.row.id,true)" type="danger" size="mini">退群</el-button>
+                        </template>
                     </template>
-                    <el-popover v-if="UID===scope.row.createuserid || ifBeyondGroup(scope.row) && scope.row.userGs"
-                        placement="left-start" width="500" trigger="click">
+                    <el-popover v-if="roles.indexOf('1')>-1 || UID===scope.row.createuserid || ifBeyondGroup(scope.row) && scope.row.userGs"
+                        placement="left-start" width="600" trigger="click">
                         <el-table :data="scope.row.userGs">
                             <el-table-column property="username" label="姓名"></el-table-column>
                             <el-table-column property="telno" label="电话"></el-table-column>
                             <el-table-column property="addr" label="籍贯"></el-table-column>
                             <el-table-column property="remark" label="备注"></el-table-column>
+                            <el-table-column label="操作" v-if="UID===scope.row.createuserid">
+                                <template slot-scope="scope2">
+                                    <el-button @click="outById(scope2.row.id,scope.row.id)" type="text" :style="scope.row.createuserid === scope2.row.id ? 'color: #c8c9cc' : 'color: #f56c6c'" :disabled="scope.row.createuserid === scope2.row.id">移除</el-button>
+                                </template>
+                            </el-table-column>
                         </el-table>
                         <el-button slot="reference" type="primary" size="mini">查看组员信息</el-button>
                     </el-popover>
@@ -84,7 +95,7 @@
             <el-form-item label="群组名称" >
                 <el-input v-model="pojo.groupname"></el-input>
             </el-form-item>
-            <el-form-item v-if="!id" label="群组密钥" >
+            <el-form-item label="群组密钥" >
                 <el-input v-model="pojo.grouppwd" type="password"></el-input>
             </el-form-item>
             <el-form-item v-if="!id" label="创建人" prop="createuserid">{{name}}</el-form-item>
@@ -149,7 +160,7 @@ export default {
                 //保存成功(flag=true),关闭弹出框,并刷新列表
                 if(response.flag){
                     this.dialogFormVisible = false  //关闭弹出框
-                    this.search()              //再次加载活动列表
+                    this.search()
                 }
             })       
         },
@@ -174,8 +185,7 @@ export default {
                         type: response.flag?'success':'error'
                         });
                     if(response.flag){
-                        this.search() ;    //如果删除执行成功,重新加载页面
-                        this.$store.dispatch('getDictType')
+                        this.search()
                     }
                 })  
             })  
@@ -220,6 +230,28 @@ export default {
                     }
                 })
             }).catch(err=>{})
+        },
+        outById(id, gid,flag) {
+            var msg = ''
+            if (flag) {
+                msg = '确定退群?'
+            } else {
+                msg = '确定移除?'
+            }
+            this.$confirm(msg, '提示', {
+            type: 'warning'
+            }).then(() => {
+                groupApi.outGroup(id,gid).then( response => {
+                    this.$message({
+                        showClose: true,
+                        message: response.message,
+                        type: response.flag?'success':'error'
+                        });
+                    if(response.flag){
+                        this.search()
+                    }
+                })  
+            })  
         },
         ifBeyondGroup(row) {
             if (row.groupmembers) {

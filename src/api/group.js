@@ -48,6 +48,12 @@ export default {
       data: dataS
     })
   },
+  outGroup: function(userid,groupid) {
+    return request({
+      url: `/group/userSignOutGroup/${userid}/${groupid}`,
+      method: 'get'
+    })
+  },
   findAllUserById: function (groupid) {
     return request({
       url: `/group/findAllUserById/${groupid}`,
