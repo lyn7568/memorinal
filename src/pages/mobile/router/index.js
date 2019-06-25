@@ -7,7 +7,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 /* Layout */
-// import Layout from '../views/layout/Layout'
+import LayoutH5 from '../views/layout/LayoutH5'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -22,21 +22,46 @@ Vue.use(Router)
   }
 **/
 export const constantRouterMap = [
-  { path: '/login', component: resolve => require(['../views/login'], resolve), hidden: true }
+  { path: '/login', component: resolve => require(['../views/login'], resolve), hidden: true },
   // { path: '/404', component: resolve => require(['../views/404'], resolve), hidden: true },
   // { path: '/401', component: resolve => require(['../views/401'], resolve), hidden: true },
 
-  // {
-  //   path: '/',
-  //   component: Layout,
-  //   redirect: '/dashboard',
-  //   name: 'Dashboard',
-  //   hidden: true,
-  //   children: [{
-  //     path: 'dashboard',
-  //     component: resolve => require(['../views/dashboard/index'], resolve)
-  //   }]
-  // },
+  {
+    path: '/',
+    component: LayoutH5,
+    children: [{
+      path: 'home',
+      name: 'home',
+      component: resolve => require(['../views/home/index'], resolve)
+    }]
+  },
+  {
+    path: '',
+    component: LayoutH5,
+    children: [{
+      path: '/group',
+      name: 'group',
+      component: resolve => require(['../views/group/index'], resolve)
+    }]
+  },
+  {
+    path: '',
+    component: LayoutH5,
+    children: [{
+      path: '/type',
+      name: 'type',
+      component: resolve => require(['../views/type/index'], resolve)
+    }]
+  },
+  {
+    path: '',
+    component: LayoutH5,
+    children: [{
+      path: '/mine',
+      name: 'mine',
+      component: resolve => require(['../views/mine/index'], resolve)
+    }]
+  },
   // {
   //   path: '/paymoney',
   //   component: Layout,

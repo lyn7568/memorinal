@@ -1,23 +1,20 @@
 <template>
   <div class="lyout-show">
-    <group>
-      <cell is-link title="Simple" link="/component/tabbar-simple"></cell>
-      <cell is-link title="Switch icons" link="/component/tabbar-icon"></cell>
-    </group>
+    <router-view></router-view>
     <tabbar>
-      <tabbar-item selected>
+      <tabbar-item selected :link="{name: 'home'}">
         <svg-icon slot="icon" icon-class="table" />
         <span slot="label">缴费</span>
       </tabbar-item>
-      <tabbar-item>
+      <tabbar-item :link="{name: 'group'}">
         <svg-icon slot="icon" icon-class="group" />
         <span slot="label">群组</span>
       </tabbar-item>
-      <tabbar-item>
+      <tabbar-item :link="{name: 'type'}">
         <svg-icon slot="icon" icon-class="form" />
         <span slot="label">类型</span>
       </tabbar-item>
-      <tabbar-item>
+      <tabbar-item :link="{name: 'mine'}">
         <svg-icon slot="icon" icon-class="user" />
         <span slot="label">我</span>
       </tabbar-item>
@@ -26,14 +23,12 @@
 </template>
 
 <script>
-import { Tabbar, TabbarItem, Group, Cell } from 'vux'
-
+import { Tabbar, TabbarItem } from 'vux'
 export default {
+  name: 'layoutH5',
   components: {
     Tabbar,
-    TabbarItem,
-    Group,
-    Cell
+    TabbarItem
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="">
         <group title="mask">
             <x-input title="手机号码格式化" mask="999 9999 9999" v-model="maskValue" :max="13" is-type="china-mobile"></x-input>
             <cell title="value" :value="maskValue"></cell>
