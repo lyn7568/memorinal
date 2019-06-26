@@ -32,7 +32,8 @@ export const constantRouterMap = [
     children: [{
       path: 'home',
       name: 'home',
-      component: resolve => require(['../views/home/index'], resolve)
+      component: resolve => require(['../views/home/index'], resolve),
+      meta: { active: 'home', title: '首页' }
     }]
   },
   {
@@ -41,7 +42,8 @@ export const constantRouterMap = [
     children: [{
       path: '/group',
       name: 'group',
-      component: resolve => require(['../views/group/index'], resolve)
+      component: resolve => require(['../views/group/index'], resolve),
+      meta: { active: 'group', title: '缴费群组' }
     }]
   },
   {
@@ -50,18 +52,34 @@ export const constantRouterMap = [
     children: [{
       path: '/type',
       name: 'type',
-      component: resolve => require(['../views/type/index'], resolve)
+      component: resolve => require(['../views/type/index'], resolve),
+      meta: { active: 'type', title: '缴费类型' }
     }]
   },
   {
     path: '',
     component: LayoutH5,
-    children: [{
-      path: '/mine',
-      name: 'mine',
-      component: resolve => require(['../views/mine/index'], resolve)
-    }]
-  },
+    children: [
+      {
+        path: '/mine',
+        name: 'mine',
+        component: resolve => require(['../views/mine/index'], resolve),
+        meta: { active: 'mine', title: '个人中心' }
+      },
+      {
+        path: 'update',
+        name: 'update',
+        component: resolve => require(['../views/mine/update'], resolve),
+        meta: { active: 'mine', title: '修改资料' }
+      },
+      {
+        path: 'changePwd',
+        name: 'changePwd',
+        component: resolve => require(['../views/mine/changePwd'], resolve),
+        meta: { active: 'mine', title: '修改密码' }
+      }
+    ]
+  }
   // {
   //   path: '/paymoney',
   //   component: Layout,

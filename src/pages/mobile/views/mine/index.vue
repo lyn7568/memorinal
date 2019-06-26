@@ -1,53 +1,67 @@
 <template>
-  <div class="lyout-show">
+  <div class="main-con">
+    <box gap="15px 0">
+      <div class="person-info">
+        <div class="person-head">
+          <svg-icon icon-class="user" />
+        </div>
+        <div class="person-desc">
+          用户邢敏</div>
+      </div>
+    </box>
     <group>
-      <cell is-link title="Simple" link="/component/tabbar-simple"></cell>
-      <cell is-link title="Switch icons" link="/component/tabbar-icon"></cell>
+      <cell is-link title="修改资料" :link="{name: 'update'}"></cell>
+      <cell is-link title="修改密码" :link="{name: 'changePwd'}"></cell>
     </group>
-    <tabbar>
-      <tabbar-item selected>
-        <svg-icon slot="icon" icon-class="table" />
-        <span slot="label">缴费</span>
-      </tabbar-item>
-      <tabbar-item>
-        <svg-icon slot="icon" icon-class="group" />
-        <span slot="label">群组</span>
-      </tabbar-item>
-      <tabbar-item>
-        <svg-icon slot="icon" icon-class="form" />
-        <span slot="label">类型</span>
-      </tabbar-item>
-      <tabbar-item>
-        <svg-icon slot="icon" icon-class="user" />
-        <span slot="label">我</span>
-      </tabbar-item>
-    </tabbar>
+
+    <box gap="60px 0">
+      <x-button plain style="color: #E64340;" @click.native="logout">退出登录</x-button>
+    </box>
   </div>
 </template>
 
 <script>
-import { Tabbar, TabbarItem, Group, Cell } from 'vux'
+import { Cell } from 'vux'
 
 export default {
   components: {
-    Tabbar,
-    TabbarItem,
-    Group,
     Cell
+  },
+  computed: {
+    UName() {
+      return this.$store.getters.name
+    }
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('FedLogOut').then(() => {
+        location.reload()
+      })
+    }
   }
 }
 </script>
 <style lang="scss">
-.lyout-show{
-  .weui-tabbar__icon{
-    width:auto;
-    height: auto;
+  .person-info{
+    background: #ffffff;
+    text-align: center;
+    padding: 1.5em;
+    .person-head{
+      margin: auto;
+      width: 8em;
+      height: 8em;
+      border-radius: 50%;
+      background:#ccc;
+      padding: 1em;
+      box-sizing: border-box;
+      .svg-icon{
+        font-size: 5em;
+        color: #ffffff;
+      }
+    }
+    .person-desc{
+      margin: .5em 0 .3em;
+      font-size: 1.4em; 
+    }
   }
-  .weui-tabbar__label{
-    margin: 2px 0;
-  }
-  .svg-icon{
-    font-size: 16px;
-  }
-}
 </style>

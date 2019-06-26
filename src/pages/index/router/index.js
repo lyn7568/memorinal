@@ -81,7 +81,7 @@ export const asyncRouterMap = [
     path: '/group',
     component: Layout,
     meta: {
-      roles: ['0','1']
+      roles: ['0', '1']
     },
     children: [
       {
@@ -96,7 +96,7 @@ export const asyncRouterMap = [
     path: '/type',
     component: Layout,
     meta: {
-      roles: ['0','1']
+      roles: ['0', '1']
     },
     children: [
       {

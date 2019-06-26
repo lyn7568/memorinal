@@ -1,22 +1,27 @@
 import Vue from 'vue'
 
-import '@/styles/index.scss' // global css
+import '@/styles/reset.scss'
 
 import App from './App'
 import router from './router'
-// import store from './store'
+import store from '@/store'
 import '@/utils/filter'
 
-import '@/icons' // icon
-// import '@/permission' // permission control
+import '@/icons'
 
-// Vue.use(ElementUI, { locale })
+import { LoadingPlugin, ToastPlugin, Group, Box, XInput, XButton } from 'vux'
+Vue.use(LoadingPlugin)
+Vue.use(ToastPlugin)
+Vue.component('group', Group)
+Vue.component('box', Box)
+Vue.component('x-input', XInput)
+Vue.component('x-button', XButton)
 
 Vue.config.productionTip = false
 
 new Vue({
   el: '#app',
   router,
-  // store,
+  store,
   render: h => h(App)
 })

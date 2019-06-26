@@ -4,15 +4,15 @@ import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式
 import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth'
-
+import { isMobile } from '@/utils'
 // permission judge function
 function hasPermission(roles, permissionRoles) {
   if (roles.indexOf('1') >= 0) return true // admin permission passed directly
   if (!permissionRoles) return true
   return roles.some(role => permissionRoles.indexOf(role) >= 0)
 }
-var mobile = /phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone/i
-if (navigator.userAgent.match(mobile)) {
+
+if (isMobile()) {
   location.href = '/mobile.html#/login'
 }
 const whiteList = ['/login'] // 不重定向白名单

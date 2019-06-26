@@ -1,12 +1,15 @@
 <template>
-  <div class="lyout-show">
-    <panel header="缴费类型" :list="list"></panel>
+  <div class="main-con">
+    <box gap="1.2em 0">
+      <panel :list="list"></panel>
+    </box>
   </div>
 </template>
 
 <script>
-import { Panel, Group  } from 'vux'
+import { Panel  } from 'vux'
 import typeApi from "@/api/type"
+import { setTimeout } from 'timers';
 export default {
   data() {
     return {
@@ -16,30 +19,35 @@ export default {
     }
   },
   components: {
-    Panel,
-    Group
+    Panel
   },
   created() {
     this.search()
   },
   methods: {
     search() {
-        typeApi.search(this.page,this.size).then( response => {
-          if (response.flag && response.data) {
-            var arr = []
-            const obj = response.data.rows
-            if (obj.length > 0) {
-              for (let i = 0; i < obj.length; ++i) {
-                let item = {
-                  title: obj[i].typename,
-                  desc: obj[i].remark
-                }
-                arr.push(item)
+      this.$vux.loading.show({
+        text: 'Loading'
+      })
+      typeApi.search(this.page,this.size).then( response => {
+        setTimeout(() => {
+          this.$vux.loading.hide()
+        }, 1000)
+        if (response.flag && response.data) {
+          var arr = []
+          const obj = response.data.rows
+          if (obj.length > 0) {
+            for (let i = 0; i < obj.length; ++i) {
+              let item = {
+                title: obj[i].typename,
+                desc: obj[i].remark
               }
-              this.list = arr
+              arr.push(item)
             }
-          } 
-        })
+            this.list = arr
+          }
+        } 
+      })
     }
   }
 }

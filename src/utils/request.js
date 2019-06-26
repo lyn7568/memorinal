@@ -1,13 +1,13 @@
+import Vue from 'vue'
 import axios from 'axios'
 import { Message, MessageBox } from 'element-ui'
+import { isMobile } from '@/utils'
 import store from '../store'
 import { getToken } from '@/utils/auth'
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.BASE_API, // api的base_url
-  timeout: 15000 // 请求超时时间
+  baseURL: process.env.BASE_API
 })
-
 // request拦截器
 service.interceptors.request.use(config => {
   if (store.getters.token) {
@@ -28,12 +28,17 @@ service.interceptors.response.use(
   */
     const res = response.data
     if (res.code !== 20000) {
-      console.log(res.message)
-      Message({
-        message: res.message,
-        type: 'error',
-        duration: 5 * 1000
-      })
+      if (isMobile()) {
+        Vue.$vux.toast.show({
+          text: res.message,
+          type: 'warn'
+        })
+      } else {
+        Message({
+          message: res.message,
+          type: 'error'
+        })
+      }
 
       // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
       if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
@@ -54,12 +59,17 @@ service.interceptors.response.use(
   //  return res
   },
   error => {
-    console.log('err' + error)// for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    if (isMobile()) {
+      Vue.$vux.toast.show({
+        text: error.message,
+        type: 'warn'
+      })
+    } else {
+      Message({
+        message: error.message,
+        type: 'error'
+      })
+    }
     return Promise.reject(error)
   }
 )
