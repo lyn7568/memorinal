@@ -25,11 +25,6 @@
                     {{scope.row.createuserid | uInfo}}
                 </template>
             </el-table-column>
-            <el-table-column label="修改人">
-                <template slot-scope="scope">
-                    {{scope.row.updateuserid | uInfo}}
-                </template>
-            </el-table-column>
             <el-table-column label="群组成员">
                 <template slot-scope="scope">
                     {{scope.row.groupmembers | uInfo}}

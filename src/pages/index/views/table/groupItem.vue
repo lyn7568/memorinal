@@ -218,7 +218,7 @@ export default {
             if (this.ptUserArr.length) {
                 this.pojo.sharemoney = (Number(this.pojo.paycount) / this.ptUserArr.length).toFixed(2)
             } else {
-               this.pojo.sharemoney = Number(this.pojo.paycount)
+               this.pojo.sharemoney = ''
             }
         },
         fetchData() {

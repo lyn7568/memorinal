@@ -25,11 +25,9 @@
       }
     },
     computed: {
-        UID() {
-            return this.$store.getters.userid
-        }
-    },
-    computed: {
+      UID() {
+          return this.$store.getters.userid
+      },
       sureDisable() {
         return !this.checkIsPass() || false
       }
@@ -50,10 +48,7 @@
           const oldPassword = this.ruleForm.oldpass
           const newPassword = this.ruleForm.checkPass
           userApi.changePwd(this.UID,oldPassword,newPassword).then(response => {
-              this.$vux.toast.show({
-                text: response.message,
-                type: response.flag?'':'warn'
-              })
+              this.messageFun(response)
               if(response.flag){
                   this.ruleForm = {
                     oldpass: '',

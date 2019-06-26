@@ -39,12 +39,26 @@ export const constantRouterMap = [
   {
     path: '',
     component: LayoutH5,
-    children: [{
-      path: '/group',
-      name: 'group',
-      component: resolve => require(['../views/group/index'], resolve),
-      meta: { active: 'group', title: '缴费群组' }
-    }]
+    children: [
+      {
+        path: '/group',
+        name: 'group',
+        component: resolve => require(['../views/group/index'], resolve),
+        meta: { active: 'group', title: '缴费群组' }
+      },
+      {
+        path: '/group/edit',
+        name: 'editGroup',
+        component: resolve => require(['../views/group/edit'], resolve),
+        meta: { active: 'group', title: '编辑群组' }
+      },
+      {
+        path: '/group/members',
+        name: 'groupM',
+        component: resolve => require(['../views/group/members'], resolve),
+        meta: { active: 'group', title: '群组成员' }
+      }
+    ]
   },
   {
     path: '',
