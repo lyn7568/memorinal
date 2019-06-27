@@ -1,5 +1,5 @@
 <template>
-  <box>
+  <div>
     <div v-if="pojo && pojo.length">
       <div v-for="item in pojo" :key="item.index">
         <form-preview
@@ -40,12 +40,9 @@
       </div>
     </div>
     <div v-else class="nodata">
-      暂无个人缴费记录
+      暂无缴费记录
     </div>
-    <div class="add-group" @click="$router.push({name:'editOwnerPay'})">
-      <svg-icon icon-class="add" />
-    </div>
-  </box>
+  </div>
 </template>
 
 <script>
@@ -69,6 +66,9 @@ export default {
     };
   },
   computed: {
+    typeList() {
+      return this.$store.getters.typeArrs
+    },
     UID() {
       return this.$store.getters.userid;
     }
@@ -86,8 +86,19 @@ export default {
         page: this.page,
         size: this.size
       }).then( response => {
-          this.pojo = response.data.rows
-          this.total = response.data.total
+        if(response.flag && response.data) {
+          const oj = response.data.rows;
+          if(oj.length > 0) {
+            for(let i = 0; i < oj.length; ++i){
+              var ll = this.typeList.filter(item => {
+                return item.id = oj[i].typeid
+              })
+              oj[i].typename = ll.typename
+            }
+            this.pojo = oj
+            this.total = response.data.total
+          }
+        }
       })
     },
     deleteById(id) {

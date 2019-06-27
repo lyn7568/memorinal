@@ -1,56 +1,68 @@
 <template>
-  <div class="main-con">
-    <box gap="20px 15px">
-      <button-tab v-model="curTab">
-        <button-tab-item @on-item-click="consoleIndex()">群组缴费</button-tab-item>
-        <button-tab-item @on-item-click="consoleIndex()">个人缴费</button-tab-item>
-      </button-tab>
-    </box>
-    <box gap="15px">
-      <grid class="projects" v-if="pojo && pojo.length">
-        <grid-item
-          class="projects-item"
-          v-for="(item, index) in pojo"
-          :key="item.index"
-          @click="clickCurGroup(item)"
-        >
-          <div class="project-index-header" :style="itemBgStyle(index)">{{item.groupname}}</div>
-          <div class="project-index-content">
-            <div class="top-gm">
-              <span>{{ item.createuserid | uInfo }}</span>
-              <span class="gm-num">
-                <svg-icon icon-class="user"/>
-                {{ item.groupmembers.length }}
-              </span>
-            </div>
-            <div class="bot-gm">{{ item.createtime }}</div>
-          </div>
-        </grid-item>
-      </grid>
-      <div v-else class="nodata">
-        暂无群组数据
-        <br>您可以到 [群组] 中创建或者加入相关群组……
+  <div>
+    <div v-if="pojo && pojo.length">
+      <div v-for="item in pojo" :key="item.index">
+        <form-preview
+          header-label="缴费金额"
+          :header-value="'￥'+item.paycount"
+          :body-items="[
+            {
+              label: '缴费类型',
+              value: item.typeid
+            },
+            {
+              label: '缴费日期',
+              value: item.paytime
+            },
+            {
+              label: '备注',
+              value: item.remark
+            }
+          ]"
+          :footer-buttons="[
+            {
+              style: 'default',
+              text: '删除',
+              onButtonClick: () => {
+                deleteById(item.id)
+              }
+            },
+            {
+              style: 'primary',
+              text: '修改',
+              onButtonClick: () => {
+                $router.push({name:'editOwnerPay',query:{id:item.id}})
+              }
+            }
+          ]">
+          </form-preview>
+          <br/>
       </div>
-    </box>
+    </div>
+    <div v-else class="nodata">
+      暂无缴费记录
+    </div>
   </div>
 </template>
 
 <script>
-import { Grid, GridItem, ButtonTab, ButtonTabItem } from "vux";
-import userApi from "@/api/user";
-import { strToArr } from "@/utils";
+import { FormPreview } from "vux";
+import paymoneyApi from "@/api/paymoney";
+import { messageFun } from "@/utils/msg";
 
 export default {
   components: {
-    Grid,
-    GridItem,
-    ButtonTab,
-    ButtonTabItem
+    FormPreview
   },
   data() {
     return {
-      curTab: 0,
-      pojo: {}
+      pojo: null,
+      searchTypeid: '',
+      rangeTime: '',
+      startTime: '',
+      endTime: '',
+      page: 1,
+      size: 10
     };
   },
   computed: {
@@ -59,87 +71,36 @@ export default {
     }
   },
   created() {
-    this.findAllGroup();
+    this.search();
   },
   methods: {
-    consoleIndex() {
-      console.log("click demo01", this.curTab);
+    search() {
+      paymoneyApi.searchOwner({
+        userid: this.UID,
+        typeid: this.searchTypeid,
+        startTime: this.startTime,
+        endTime: this.endTime,
+        page: this.page,
+        size: this.size
+      }).then( response => {
+          this.pojo = response.data.rows
+          this.total = response.data.total
+      })
     },
-    findAllGroup() {
-      this.$vux.loading.show()
-      userApi.findAllGroup(this.UID).then(response => {
-        setTimeout(() => {
-          this.$vux.loading.hide()
-        }, 1000)
-        if (response.flag && response.data) {
-          for (let i = 0; i < response.data.length; i++) {
-            response.data[i].groupmembers = strToArr(
-              response.data[i].groupmembers
-            );
-          }
-          this.pojo = response.data;
+    deleteById(id) {
+      this.$vux.confirm.show({
+        title: '提示',
+        content: '确定要删除吗?',
+        onConfirm : () => {
+          groupApi.deleteByIdOwner(id).then(response => {
+            messageFun(response)
+            if (response.flag) {
+              this.search();
+            }
+          })
         }
-      });
-    },
-    clickCurGroup(val) {
-      sessionStorage.setItem("GROUPName", val.groupname);
-      this.$router.push({
-        name: "groupItem",
-        query: {
-          id: val.id
-        }
-      });
-    },
-    itemBgStyle(index) {
-      var colorList = ["#a2d148", "#7461c2", "#56b8eb", "#20bfa3", "#f28033"];
-      var ii = "";
-      for (let i = 0; i < colorList.length; ++i) {
-        if (index % colorList.length === i) {
-          ii = colorList[i];
-        }
-      }
-      return `background: ${ii}`;
+      })
     }
   }
 };
 </script>
-<style lang="scss">
-.projects {
-  overflow: hidden;
-  .projects-item {
-    float: left;
-    padding: 4px;
-    overflow: hidden;
-    .project-index-header {
-      font-size: 16px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 120px;
-      color: #ffffff;
-      text-align: center;
-    }
-    .project-index-content {
-      font-size: 13px;
-      color: #666;
-      line-height: 22px;
-      padding: 8px 15px;
-      .top-gm {
-        display: flex;
-        justify-content: space-between;
-        .gm-num {
-          color: #b0bec5;
-          .svg-icon {
-            font-size: 14px;
-          }
-        }
-      }
-      .bot-gm {
-        color: #b0bec5;
-      }
-    }
-  }
-}
-</style>

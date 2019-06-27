@@ -1,6 +1,6 @@
 <template>
   <box>
-    <grid class="projects" v-if="pojo && pojo.length">
+    <grid :cols="2" class="projects" v-if="pojo && pojo.length">
       <grid-item
         class="projects-item"
         v-for="(item, index) in pojo"
@@ -93,7 +93,7 @@ export default {
 .projects {
   overflow: hidden;
   .projects-item {
-    float: left;
+    // float: left;
     padding: 4px;
     overflow: hidden;
     .project-index-header {
