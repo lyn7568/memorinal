@@ -4,18 +4,14 @@ import NProgress from 'nprogress' // Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条样式
 import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth'
-import { isMobile } from '@/utils'
-// permission judge function
+
 function hasPermission(roles, permissionRoles) {
-  if (roles.indexOf('1') >= 0) return true // admin permission passed directly
+  if (roles.indexOf('1') >= 0) return true
   if (!permissionRoles) return true
   return roles.some(role => permissionRoles.indexOf(role) >= 0)
 }
 
-if (isMobile()) {
-  location.href = '/mobile.html#/login'
-}
-const whiteList = ['/login'] // 不重定向白名单
+const whiteList = ['/login']
 router.beforeEach((to, from, next) => {
   NProgress.start()
   if (getToken()) {
@@ -24,17 +20,6 @@ router.beforeEach((to, from, next) => {
     } else {
       if (store.getters.roles.length === 0) {
         store.dispatch('GetInfo').then(res => {
-          var roles = []
-          const dataS = res.data
-          if (dataS.id === '1138680837106176000') {
-            roles = ['1']
-          } else {
-            roles = ['0']
-          }
-          store.dispatch('GenerateRoutes', { roles }).then(() => {
-            router.addRoutes(store.getters.addRouters)
-            next({ ...to, replace: true })
-          })
           next()
         }).catch(() => {
           store.dispatch('FedLogOut').then(() => {
@@ -45,8 +30,6 @@ router.beforeEach((to, from, next) => {
       } else {
         if (hasPermission(store.getters.roles, to.meta.roles)) {
           next()
-        } else {
-          next({ path: '/401', replace: true, query: { noGoBack: true }})
         }
       }
     }

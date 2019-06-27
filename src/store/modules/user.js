@@ -89,6 +89,7 @@ const user = {
         commit('SET_USERID', '')
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
+        sessionStorage.removeItem('GROUPName')
         removeToken()
         resolve()
       })

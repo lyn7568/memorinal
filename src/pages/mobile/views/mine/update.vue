@@ -21,6 +21,7 @@
 <script>
 import { PopupRadio } from 'vux'
 import userApi from "@/api/user"
+import { messageFun } from '@/utils/msg'
 export default {
   data() {
     return {
@@ -52,7 +53,7 @@ export default {
     onSubmit() {
       if (this.checkIsRequired()) {
         userApi.saveOrUpdate(this.UID,this.pojo).then( response => {
-          this.messageFun(response)
+          messageFun(response)
           if(response.flag){
               this.findById()
               this.$router.back(-1)

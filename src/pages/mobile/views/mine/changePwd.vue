@@ -2,7 +2,7 @@
   <div class="main-con">
     <group>
       <x-input type="password" title="旧密码" v-model="ruleForm.oldpass" placeholder="请输入您的旧密码" text-align="right" required></x-input>
-      <x-input type="password" title="新密码" :min="6" :max="24" v-model="ruleForm.pass" placeholder="请设置您的新密码" text-align="right" required></x-input>
+      <x-input type="password" title="新密码" :min="5" v-model="ruleForm.pass" placeholder="请设置您的新密码" text-align="right" required></x-input>
       <x-input type="password" title="确认密码" v-model="ruleForm.checkPass" :equal-with="ruleForm.pass" placeholder="请再次输入密码确认" text-align="right" required></x-input>
     </group>
     <box gap="60px 0">
@@ -13,6 +13,7 @@
 
 <script>
   import userApi from "@/api/user"
+  import { messageFun } from '@/utils/msg'
 
   export default {
     data() {
@@ -38,7 +39,7 @@
           && this.ruleForm.pass
           && this.ruleForm.checkPass
           && this.ruleForm.checkPass === this.ruleForm.pass
-          && this.ruleForm.pass.length >= 6 && this.ruleForm.pass.length <= 24) {
+          && this.ruleForm.pass.length >= 5) {
             return true
         }
         return false
@@ -48,7 +49,7 @@
           const oldPassword = this.ruleForm.oldpass
           const newPassword = this.ruleForm.checkPass
           userApi.changePwd(this.UID,oldPassword,newPassword).then(response => {
-              this.messageFun(response)
+             messageFun(response)
               if(response.flag){
                   this.ruleForm = {
                     oldpass: '',

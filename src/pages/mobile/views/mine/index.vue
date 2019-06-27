@@ -5,8 +5,7 @@
         <div class="person-head">
           <svg-icon icon-class="user" />
         </div>
-        <div class="person-desc">
-          用户邢敏</div>
+        <div class="person-desc">{{UName}}</div>
       </div>
     </box>
     <group>
@@ -21,12 +20,7 @@
 </template>
 
 <script>
-import { Cell } from 'vux'
-
 export default {
-  components: {
-    Cell
-  },
   computed: {
     UName() {
       return this.$store.getters.name

@@ -1,24 +1,9 @@
 <template>
   <div class="main-con">
     <group>
-      <x-input
-        title="群组名称"
-        v-model="pojo.groupname"
-        placeholder="请输入群组名称"
-        text-align="right"
-        required
-      ></x-input>
-      <x-input
-        title="群组密钥"
-        type="password"
-        v-model="pojo.grouppwd"
-        placeholder="请输入群组密钥"
-        text-align="right"
-        required
-      ></x-input>
-    </group>
-    <group>
-      <cell :title="groupid?'修改人':'创建人'" :value="UName"></cell>
+      <popup-picker title="缴费类型" :data="typeList" v-model="pojo.typeid" placeholder="请选择缴费类型" required></popup-picker>
+      <datetime title="缴费日期" v-model="pojo.paytime" placeholder="请选择缴费日期" required></datetime>
+      <x-input title="缴费金额" v-model="pojo.paycount" placeholder="请输入缴费金额" text-align="right" required></x-input>
     </group>
     <group>
       <x-input title="备注" v-model="pojo.remark" placeholder="请输入备注信息" text-align="right"></x-input>
@@ -31,9 +16,14 @@
 </template>
 
 <script>
+import { PopupPicker, Datetime } from "vux";
 import groupApi from "@/api/group";
 import { messageFun } from '@/utils/msg'
 export default {
+  components: {
+    PopupPicker,
+    Datetime
+  },
   data() {
     return {
       groupid: '',
@@ -41,6 +31,9 @@ export default {
     };
   },
   computed: {
+    typeList() {
+      return this.$store.getters.typeArrs
+    },
     UID() {
       return this.$store.getters.userid;
     },
@@ -52,6 +45,7 @@ export default {
     }
   },
   created() {
+    console.log(this.typeList)
     if (this.$route.query.id) {
       this.groupid = this.$route.query.id
       this.findById()
@@ -59,7 +53,7 @@ export default {
   },
   methods: {
     checkIsRequired() {
-      if (this.pojo.groupname && this.pojo.grouppwd) {
+      if (this.pojo.typeid && this.pojo.paytime && this.pojo.paycount) {
         return true;
       }
       return false;

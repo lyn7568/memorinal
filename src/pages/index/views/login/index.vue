@@ -109,6 +109,7 @@ export default {
     height: 100%;
     width:100%;
     background-color: $bg;
+    background-color: -webkit-linear-gradient(#ae56e1, #6e84f1);
     input:-webkit-autofill {
       -webkit-box-shadow: 0 0 0px 1000px #293444 inset !important;
       -webkit-text-fill-color: #fff !important;

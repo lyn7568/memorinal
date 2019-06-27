@@ -1,53 +1,40 @@
 <template>
-  <div class="lyout-show">
-    <group>
-      <cell is-link title="Simple" link="/component/tabbar-simple"></cell>
-      <cell is-link title="Switch icons" link="/component/tabbar-icon"></cell>
-    </group>
-    <tabbar>
-      <tabbar-item selected>
-        <svg-icon slot="icon" icon-class="table" />
-        <span slot="label">缴费</span>
-      </tabbar-item>
-      <tabbar-item>
-        <svg-icon slot="icon" icon-class="group" />
-        <span slot="label">群组</span>
-      </tabbar-item>
-      <tabbar-item>
-        <svg-icon slot="icon" icon-class="form" />
-        <span slot="label">类型</span>
-      </tabbar-item>
-      <tabbar-item>
-        <svg-icon slot="icon" icon-class="user" />
-        <span slot="label">我</span>
-      </tabbar-item>
-    </tabbar>
+  <div class="main-con">
+    <box gap="20px 15px">
+      <button-tab v-model="curTab">
+        <button-tab-item>群组缴费</button-tab-item>
+        <button-tab-item>个人缴费</button-tab-item>
+      </button-tab>
+    </box>
+    <box gap="15px" v-show="curTab===0">
+      <my-groups></my-groups>
+    </box>
+    <box gap="15px 0" v-show="curTab===1">
+      <personal-pay></personal-pay>
+    </box>
   </div>
 </template>
 
 <script>
-import { Tabbar, TabbarItem, Group, Cell } from 'vux'
+import { Grid, GridItem, ButtonTab, ButtonTabItem } from "vux";
+import userApi from "@/api/user";
+import { strToArr } from "@/utils";
+import MyGroups from './myGroups'
+import PersonalPay from './ownerPay/index'
 
 export default {
   components: {
-    Tabbar,
-    TabbarItem,
-    Group,
-    Cell
+    Grid,
+    GridItem,
+    ButtonTab,
+    ButtonTabItem,
+    MyGroups,
+    PersonalPay
+  },
+  data() {
+    return {
+      curTab: 0
+    };
   }
-}
+};
 </script>
-<style lang="scss">
-.lyout-show{
-  .weui-tabbar__icon{
-    width:auto;
-    height: auto;
-  }
-  .weui-tabbar__label{
-    margin: 2px 0;
-  }
-  .svg-icon{
-    font-size: 16px;
-  }
-}
-</style>

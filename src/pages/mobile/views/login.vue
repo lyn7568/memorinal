@@ -1,72 +1,149 @@
 <template>
-    <div class="">
-        <group title="mask">
-            <x-input title="手机号码格式化" mask="999 9999 9999" v-model="maskValue" :max="13" is-type="china-mobile"></x-input>
-            <cell title="value" :value="maskValue"></cell>
-            <x-input title="(99) 9-99" mask="(99) 9-99" v-model="maskValue2" :max="9"></x-input>
+    <div class="log-show">
+      <div class="log-body">
+        <p class="log-tit">e缴费管理系统</p>
+        <group class="log-form">
+          <div class="log-item">
+            <span class="svg-container">
+              <svg-icon icon-class="user" />
+            </span>
+            <x-input title="账" type="text" v-model="loginForm.username" placeholder="请输入您的账号" is-type="china-mobile" required></x-input>
+          </div>
+          <div class="log-item">
+            <span class="svg-container">
+              <svg-icon icon-class="password" />
+            </span>
+            <x-input title="密" :type="pwdType" @keyup.enter.native="handleLogin" :min="5" v-model="loginForm.password" placeholder="请输入您的登录密码" required></x-input>
+            <span class="show-pwd" @click="showPwd"><svg-icon icon-class="eye" /></span>
+          </div>
         </group>
-        <x-button type="primary">登录</x-button>
+        <div class="log-btn">
+          <x-button type="primary" :disabled="sureDisable" :show-loading="loading" @click.native.prevent="handleLogin">登录</x-button>
+        </div>
+      </div>
     </div>
 </template>
 <script>
-import { XInput, Group, XButton, Cell } from 'vux'
+import { XInput, Cell } from 'vux'
 
 export default {
   components: {
     XInput,
-    XButton,
-    Group,
     Cell
   },
   data () {
     return {
-      password: '123465',
-      password2: '',
-      enterText: '',
-      valid1: false,
-      valid2: false,
-      iconType: '',
-      be2333: function (value) {
-        return {
-          valid: value === '2333',
-          msg: 'Must be 2333'
-        }
+      falg: false,
+      loginForm: {
+        username: '',
+        password: ''
       },
-      style: '',
-      disabledValue: 'hello',
-      debounceValue: '',
-      maxValue: '',
-      maskValue: '13545678910',
-      maskValue2: ''
+      loading: false,
+      pwdType: 'password'
+    }
+  },
+  computed: {
+    sureDisable() {
+      return !this.checkIsPass() || false
     }
   },
   methods: {
-    getValid1 () {
-      this.valid1 = this.$refs.input01.valid
+    checkIsPass() {
+      if (this.loginForm.username
+        && this.loginForm.password) {
+          return true
+      }
+      return false
     },
-    getValid2 () {
-      this.valid2 = this.$refs.input02.valid
+    showPwd() {
+      if (this.pwdType === 'password') {
+        this.pwdType = ''
+      } else {
+        this.pwdType = 'password'
+      }
     },
-    change (val) {
-      console.log('on change', val)
-    },
-    onBlur (val) {
-      console.log('on blur', val)
-    },
-    onFocus (val, $event) {
-      console.log('on focus', val, $event)
-    },
-    onEnter (val) {
-      console.log('click enter!', val)
+    handleLogin() {
+      if (this.checkIsPass()) {
+        this.loading = true
+        this.$store.dispatch('Login', this.loginForm).then((response) => {
+          this.$router.push({ path: '/' })
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+        })
+      }
     }
   }
 }
 </script>
-<style scoped>
-.red {
-  color: red;
-}
-.green {
-  color: green;
+<style lang="scss">
+.log-show{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: -webkit-linear-gradient(#ae56e1, #6e84f1);
+  .log-body{
+    margin: 8em 0;
+    .log-tit{
+      color: #ffffff;
+      text-align: center;
+      font-size: 2.2em;
+      line-height: 3em;
+    }
+    .log-form{
+      margin: 2em;
+      .weui-cells{
+        background: none;
+        &::before, &::after{
+          content: none;
+        }
+      }
+      .log-item{
+        position: relative;
+        margin: 1em 0;
+        border-radius: 40px;
+        overflow: hidden;
+        background: rgba(256,256,256,.4);
+        color: #ffffff;
+        line-height: 2.4;
+        font-size: 1.1em;
+        .weui-label{
+          color: transparent;
+        }
+        .weui-input:-webkit-autofill {
+          -webkit-box-shadow: 0 0 0px 1000px rgba(256,256,256,.1) inset !important;
+          -webkit-text-fill-color: #666 !important;
+        }
+        .weui-icon-clear{
+          color: #ffffff;
+        }
+        .svg-container{
+          position: absolute;
+          left: 1em;
+          top: 50%;
+          transform: translateY(-50%)
+        }
+        .show-pwd{
+          position: absolute;
+          right: 2em;
+          top: 50%;
+          transform: translateY(-50%)
+        }
+      }
+    }
+    .log-btn{
+      margin: 0.5em 2em;
+      .weui-btn_primary{
+        background: rgba(256,256,256,1);
+        border-radius: 40px;
+        line-height: 3.2;
+        font-size: 1.5em;
+        color: #6e84f1;
+      }
+      .weui-btn_disabled {
+        color: rgba(110, 132, 241, 0.6);
+      }
+    }
+  }
 }
 </style>

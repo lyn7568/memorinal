@@ -29,12 +29,37 @@ export const constantRouterMap = [
   {
     path: '/',
     component: LayoutH5,
+    redirect: '/home',
     children: [{
-      path: 'home',
+      path: '/home',
       name: 'home',
       component: resolve => require(['../views/home/index'], resolve),
       meta: { active: 'home', title: '首页' }
     }]
+  },
+  {
+    path: '',
+    component: LayoutH5,
+    children: [
+      {
+        path: '/home/gPay',
+        name: 'groupPay',
+        component: resolve => require(['../views/home/groupPay/index'], resolve),
+        meta: { active: 'home', title: '群组缴费详情' }
+      },
+      {
+        path: '/home/oPay',
+        name: 'ownerPay',
+        component: resolve => require(['../views/home/ownerPay/index'], resolve),
+        meta: { active: 'home', title: '个人缴费详情' }
+      },
+      {
+        path: '/home/oPay/edit',
+        name: 'editOwnerPay',
+        component: resolve => require(['../views/home/ownerPay/edit'], resolve),
+        meta: { active: 'home', title: '编辑个人缴费' }
+      }
+    ]
   },
   {
     path: '',

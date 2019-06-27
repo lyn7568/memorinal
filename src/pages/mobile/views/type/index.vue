@@ -26,9 +26,7 @@ export default {
   },
   methods: {
     search() {
-      this.$vux.loading.show({
-        text: 'Loading'
-      })
+      this.$vux.loading.show()
       typeApi.search(this.page,this.size).then( response => {
         setTimeout(() => {
           this.$vux.loading.hide()
