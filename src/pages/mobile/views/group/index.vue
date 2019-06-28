@@ -1,24 +1,26 @@
 <template>
   <div class="main-con">
-    <group v-for="item in list" :key="item.index">
-      <cell title="群组名称" :value="item.groupname" class="big-font"></cell>
-      <cell title="创建人" :value="item.createuserid | uInfo"></cell>
-      <cell title="备注" :value="item.remark"></cell>
-      <cell title="创建时间" :value="item.createtime"></cell>
-      <flexbox class="group-btn" :gutter="0">
-        <template v-if="UID===item.createuserid">
-          <flexbox-item><x-button plain @click.native="deleteById(item.id)">删除</x-button></flexbox-item>
-          <flexbox-item><x-button plain @click.native="$router.push({name:'editGroup', query: { id:item.id } })">修改</x-button></flexbox-item>
-        </template>
-        <template v-else>
-          <flexbox-item v-if="ifBeyondGroup(item)"><x-button plain @click="outById(UID,item.id)">退群</x-button></flexbox-item>
-          <flexbox-item><x-button plain @click.native="joinGroup(item.id)" :disabled="ifBeyondGroup(item)">{{ifBeyondGroup(item)?'已加入':'加群'}}</x-button></flexbox-item>
-        </template>
-        <template v-if="UID===item.createuserid || ifBeyondGroup(item)">
-          <flexbox-item><x-button plain @click.native="showGroupMemners(item)">查看成员</x-button></flexbox-item>
-        </template>
-      </flexbox>
-    </group>
+    <v-scroll :onLoadMore="onLoadMore" :dataList="scrollData">
+      <group v-for="item in list" :key="item.index">
+        <cell title="群组名称" :value="item.groupname" class="big-font"></cell>
+        <cell title="创建人" :value="item.createuserid | uInfo"></cell>
+        <cell title="备注" :value="item.remark"></cell>
+        <cell title="创建时间" :value="item.createtime"></cell>
+        <flexbox class="group-btn" :gutter="1">
+          <template v-if="UID===item.createuserid">
+            <flexbox-item><x-button type="warn" @click.native="deleteById(item.id)">删除</x-button></flexbox-item>
+            <flexbox-item><x-button type="primary" @click.native="$router.push({name:'editGroup', query: { id:item.id } })">修改</x-button></flexbox-item>
+          </template>
+          <template v-else>
+            <flexbox-item v-if="ifBeyondGroup(item)"><x-button type="warn" @click="outById(UID,item.id)">退群</x-button></flexbox-item>
+            <flexbox-item><x-button type="primary" @click.native="joinGroup(item.id)" :disabled="ifBeyondGroup(item)">{{ifBeyondGroup(item)?'已加入':'加群'}}</x-button></flexbox-item>
+          </template>
+          <template v-if="UID===item.createuserid || ifBeyondGroup(item)">
+            <flexbox-item><x-button type="primary" @click.native="showGroupMemners(item)">查看成员</x-button></flexbox-item>
+          </template>
+        </flexbox>
+      </group>
+    </v-scroll>
     <div class="add-group" @click="$router.push({name:'editGroup'})">
       <svg-icon icon-class="add" />
     </div>
@@ -30,20 +32,23 @@ import { Flexbox, FlexboxItem } from "vux";
 import groupApi from "@/api/group";
 import { strToArr, arrToStr } from "@/utils";
 import { messageFun } from '@/utils/msg'
-
+import VScroll from "@/components/ScrollMore";
 export default {
   data() {
     return {
-      list: null,
-      pojo: {},
+      scrollData:{
+        noFlag: false,
+        loading: false
+      },
+      list: [],
       page: 1,
-      size: 10,
-      total: 0
+      size: 10
     };
   },
   components: {
     Flexbox,
-    FlexboxItem
+    FlexboxItem,
+    VScroll
   },
   computed: {
     name() {
@@ -57,6 +62,16 @@ export default {
     this.search();
   },
   methods: {
+    onLoadMore(done) {
+      var that = this
+      if (!that.scrollData.noFlag) {
+        setTimeout(() => {
+          that.page++;
+          that.search()
+          done();
+        }, 10);
+      }
+    },
     deleteById(id) {
       this.$vux.confirm.show({
         title: '提示',
@@ -78,12 +93,17 @@ export default {
         this.$vux.loading.hide()
       }, 1000)
       if (response.flag && response.data) {
-        const $info = response.data.rows;
-        if ($info.length > 0) {
-          this.list = $info;
-          this.total = response.data.total;
+        const oj = response.data.rows
+        if(oj.length > 0) {
+          this.$nextTick(() => {
+            this.list = this.list.concat(oj)
+          })
+          if (oj.length < this.size) {
+            this.scrollData.noFlag = true
+          }
         }
       }
+      this.scrollData.loading = false
     },
     currentPageSize(val) {
       this.size = val;
@@ -141,6 +161,7 @@ export default {
     border-top: 1px solid #dcdcdc;
     .weui-btn{
       font-size: .9em;
+      border-radius: 0
     }
   }
 }

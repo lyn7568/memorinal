@@ -1,30 +1,47 @@
 <template>
   <div class="main-con">
-    <box gap="1.2em 0">
-      <panel :list="list"></panel>
-    </box>
+    <v-scroll :onLoadMore="onLoadMore" :dataList="scrollData">
+      <group>
+        <panel :list="list"></panel>
+      </group>
+    </v-scroll>
   </div>
 </template>
 
 <script>
 import { Panel  } from 'vux'
 import typeApi from "@/api/type"
-import { setTimeout } from 'timers';
+import VScroll from "@/components/ScrollMore";
 export default {
   data() {
     return {
+      scrollData:{
+        noFlag: false,
+        loading: false
+      },
       page: 1,
       size: 20,
       list: []
     }
   },
   components: {
-    Panel
+    Panel,
+    VScroll
   },
   created() {
     this.search()
   },
   methods: {
+     onLoadMore(done) {
+      var that = this
+      if (!that.scrollData.noFlag) {
+        setTimeout(() => {
+          that.page++;
+          that.search()
+          done();
+        }, 10);
+      }
+    },
     search() {
       this.$vux.loading.show()
       typeApi.search(this.page,this.size).then( response => {
@@ -42,9 +59,15 @@ export default {
               }
               arr.push(item)
             }
-            this.list = arr
+            this.$nextTick(() => {
+              this.list = this.list.concat(arr)
+            })
+            if (obj.length < this.size) {
+              this.scrollData.noFlag = true
+            }
           }
-        } 
+        }
+        this.scrollData.loading = false
       })
     }
   }

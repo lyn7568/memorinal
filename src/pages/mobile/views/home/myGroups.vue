@@ -63,7 +63,9 @@ export default {
               response.data[i].groupmembers
             );
           }
-          this.pojo = response.data;
+          this.$nextTick(() => {
+            this.pojo = response.data;
+          })
         }
       });
     },

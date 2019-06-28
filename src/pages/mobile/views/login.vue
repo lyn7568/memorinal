@@ -18,7 +18,7 @@
           </div>
         </group>
         <div class="log-btn">
-          <x-button type="primary" :disabled="sureDisable" :show-loading="loading" @click.native.prevent="handleLogin">登录</x-button>
+          <x-button type="primary" :disabled="sureDisable()" :show-loading="loading" @click.native.prevent="handleLogin">登录</x-button>
         </div>
       </div>
     </div>
@@ -42,12 +42,18 @@ export default {
       pwdType: 'password'
     }
   },
-  computed: {
-    sureDisable() {
-      return !this.checkIsPass() || false
-    }
+  // computed: {
+  //   sureDisable() {
+  //     return !this.checkIsPass() || false
+  //   }
+  // },
+  created() {
+    this.sureDisable()
   },
   methods: {
+    sureDisable() {
+      return !this.checkIsPass() || false
+    },
     checkIsPass() {
       if (this.loginForm.username
         && this.loginForm.password) {
@@ -110,7 +116,7 @@ export default {
         .weui-label{
           color: transparent;
         }
-        .weui-input:-webkit-autofill {
+        input.weui-input:-webkit-autofill {
           -webkit-box-shadow: 0 0 0px 1000px rgba(256,256,256,.1) inset !important;
           -webkit-text-fill-color: #666 !important;
         }

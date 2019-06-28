@@ -31,3 +31,7 @@ Vue.filter('typeInfo', function(val) {
     return '无'
   }
 })
+
+Vue.filter('priceF', function(val) {
+  return val.toFixed(2)
+})

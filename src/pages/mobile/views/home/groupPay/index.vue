@@ -1,47 +1,49 @@
 <template>
-  <div>
-    <div v-if="pojo && pojo.length">
-      <div v-for="item in pojo" :key="item.index">
-        <form-preview
-          header-label="缴费金额"
-          :header-value="'￥'+item.paycount"
-          :body-items="[
-            {
-              label: '缴费类型',
-              value: item.typeid
-            },
-            {
-              label: '缴费日期',
-              value: item.paytime
-            },
-            {
-              label: '备注',
-              value: item.remark
-            }
-          ]"
-          :footer-buttons="[
-            {
-              style: 'default',
-              text: '删除',
-              onButtonClick: () => {
-                deleteById(item.id)
+  <div class="main-con">
+    <box gap="15px 0">
+      <div v-if="pojo && pojo.length">
+        <div v-for="item in pojo" :key="item.index">
+          <form-preview
+            header-label="缴费金额"
+            :header-value="'￥'+item.paycount"
+            :body-items="[
+              {
+                label: '缴费类型',
+                value: item.typeid
+              },
+              {
+                label: '缴费日期',
+                value: item.paytime
+              },
+              {
+                label: '备注',
+                value: item.remark
               }
-            },
-            {
-              style: 'primary',
-              text: '修改',
-              onButtonClick: () => {
-                $router.push({name:'editOwnerPay',query:{id:item.id}})
+            ]"
+            :footer-buttons="[
+              {
+                style: 'default',
+                text: '删除',
+                onButtonClick: () => {
+                  deleteById(item.id)
+                }
+              },
+              {
+                style: 'primary',
+                text: '修改',
+                onButtonClick: () => {
+                  $router.push({name:'editOwnerPay',query:{id:item.id}})
+                }
               }
-            }
-          ]">
-          </form-preview>
-          <br/>
+            ]">
+            </form-preview>
+            <br/>
+        </div>
       </div>
-    </div>
-    <div v-else class="nodata">
-      暂无缴费记录
-    </div>
+      <div v-else class="nodata">
+        暂无缴费记录
+      </div>
+    </box>
   </div>
 </template>
 
@@ -56,8 +58,10 @@ export default {
   },
   data() {
     return {
+      groupid: '',
       pojo: null,
       searchTypeid: '',
+      searchPayuserid: '',
       rangeTime: '',
       startTime: '',
       endTime: '',
@@ -66,25 +70,41 @@ export default {
     };
   },
   computed: {
+    typeList() {
+      return this.$store.getters.typeArrs
+    },
     UID() {
       return this.$store.getters.userid;
     }
   },
   created() {
-    this.search();
+    if (this.$route.query.id) {
+        this.groupid = this.$route.query.id
+        this.search()
+        this.findAllUserById()
+        this.getGroupAllCosts()
+    }
   },
   methods: {
     search() {
-      paymoneyApi.searchOwner({
-        userid: this.UID,
+       paymoneyApi.findSearch({
+        groupid: this.groupid,
+        payuserid: this.searchPayuserid,
         typeid: this.searchTypeid,
         startTime: this.startTime,
         endTime: this.endTime,
         page: this.page,
         size: this.size
       }).then( response => {
-          this.pojo = response.data.rows
-          this.total = response.data.total
+        if(response.flag && response.data) {
+          const oj = response.data.rows;
+          if(oj.length > 0) {
+            this.$nextTick(() => {
+              this.pojo = oj
+              this.total = response.data.total
+            })
+          }
+        }
       })
     },
     deleteById(id) {
@@ -92,7 +112,7 @@ export default {
         title: '提示',
         content: '确定要删除吗?',
         onConfirm : () => {
-          groupApi.deleteByIdOwner(id).then(response => {
+          paymoneyApi.deleteById(id).then(response => {
             messageFun(response)
             if (response.flag) {
               this.search();

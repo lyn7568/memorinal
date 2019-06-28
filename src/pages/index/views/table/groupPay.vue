@@ -41,7 +41,9 @@ export default {
                     for(let i = 0; i < response.data.length; i++) {
                         response.data[i].groupmembers = strToArr(response.data[i].groupmembers)
                     }
-                    this.pojo = response.data;
+                    this.$nextTick(() => {
+                        this.pojo = response.data;
+                    })
                 }
             })
         },
