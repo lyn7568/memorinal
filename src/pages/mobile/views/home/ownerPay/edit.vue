@@ -1,8 +1,8 @@
 <template>
-  <div class="main-con">
+  <box gap="10px 0">
     <group>
       <popup-picker title="缴费类型" show-name :data="[typeList()]" v-model="pojo.typeid" placeholder="请选择缴费类型" required></popup-picker>
-      <datetime title="缴费日期" v-model="pojo.paytime" placeholder="请选择缴费日期" required></datetime>
+      <datetime title="缴费日期" v-model="pojo.paytime" placeholder="请选择缴费日期"></datetime>
       <x-input title="缴费金额" v-model="pojo.paycount" placeholder="请输入缴费金额" text-align="right" required></x-input>
     </group>
     <group>
@@ -12,7 +12,7 @@
     <box gap="60px 0">
       <x-button plain :disabled="sureDisable" @click.native="onSubmit">保存</x-button>
     </box>
-  </div>
+  </box>
 </template>
 
 <script>
@@ -68,7 +68,7 @@ export default {
       return arr
     },
     checkIsRequired() {
-      if (this.pojo.typeid && this.pojo.paytime && this.pojo.paycount) {
+      if (this.pojo.typeid && this.pojo.paycount) {
         return true;
       }
       return false;

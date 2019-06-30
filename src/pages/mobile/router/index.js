@@ -33,33 +33,42 @@ export const constantRouterMap = [
     children: [{
       path: '/home',
       name: 'home',
+      redirect: { name: 'myGroups' },
       component: resolve => require(['../views/home/index'], resolve),
-      meta: { active: 'home', title: '首页' }
+      meta: { active: 'home', title: '首页' },
+      children: [
+        {
+          path: 'myGroups',
+          name: 'myGroups',
+          component: resolve => require(['../views/home/myGroups'], resolve),
+          meta: { active: 'home', title: '所在群组' }
+        },
+        {
+          path: 'gPay',
+          name: 'groupPay',
+          component: resolve => require(['../views/home/groupPay/index'], resolve),
+          meta: { active: 'home', title: '群组缴费详情' }
+        },
+        {
+          path: 'gPay/edit',
+          name: 'editGroupPay',
+          component: resolve => require(['../views/home/groupPay/edit'], resolve),
+          meta: { active: 'home', title: '编辑群组缴费' }
+        },
+        {
+          path: 'oPay',
+          name: 'ownerPay',
+          component: resolve => require(['../views/home/ownerPay/index'], resolve),
+          meta: { active: 'home', title: '个人缴费详情' }
+        },
+        {
+          path: 'oPay/edit',
+          name: 'editOwnerPay',
+          component: resolve => require(['../views/home/ownerPay/edit'], resolve),
+          meta: { active: 'home', title: '编辑个人缴费' }
+        }
+      ]
     }]
-  },
-  {
-    path: '',
-    component: LayoutH5,
-    children: [
-      {
-        path: '/home/gPay',
-        name: 'groupPay',
-        component: resolve => require(['../views/home/groupPay/index'], resolve),
-        meta: { active: 'home', title: '群组缴费详情' }
-      },
-      {
-        path: '/home/oPay',
-        name: 'ownerPay',
-        component: resolve => require(['../views/home/ownerPay/index'], resolve),
-        meta: { active: 'home', title: '个人缴费详情' }
-      },
-      {
-        path: '/home/oPay/edit',
-        name: 'editOwnerPay',
-        component: resolve => require(['../views/home/ownerPay/edit'], resolve),
-        meta: { active: 'home', title: '编辑个人缴费' }
-      }
-    ]
   },
   {
     path: '',

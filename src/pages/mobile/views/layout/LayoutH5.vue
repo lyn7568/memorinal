@@ -111,4 +111,9 @@ export default {
 .weui-form-preview{
   font-size: 15px;
 }
+
+.chart-wrapper{
+  margin: 2em 0;
+  background: #ffffff;
+}
 </style>

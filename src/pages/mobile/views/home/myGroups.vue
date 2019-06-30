@@ -1,5 +1,5 @@
 <template>
-  <box>
+  <box gap="15px">
     <grid :cols="2" class="projects" v-if="pojo && pojo.length">
       <grid-item
         class="projects-item"

@@ -8,7 +8,10 @@
     </box>
     <template v-if="curTab===0">
       <div class="chart-wrapper" v-if ="sumCount">
-        <bie-chart :pieData="pieDataOwner"></bie-chart>
+        <pie-chart :pieData="pieDataOwner" :height="'400px'" :channel="true"></pie-chart>
+      </div>
+      <div v-else class="nodata">
+        暂无缴费记录
       </div>
     </template>
     <v-scroll v-if="curTab===1" :onLoadMore="onLoadMore" :dataList="scrollData" :topVal="'140'">
@@ -55,6 +58,9 @@
         暂无缴费记录
       </div>
     </v-scroll>
+    <div class="add-group" @click="$router.push({name:'editOwnerPay'})">
+      <svg-icon icon-class="add" />
+    </div>
   </div>
 </template>
 
@@ -63,14 +69,14 @@ import { FormPreview, ButtonTab, ButtonTabItem } from "vux";
 import paymoneyApi from "@/api/paymoney";
 import { messageFun } from "@/utils/msg";
 import VScroll from "@/components/ScrollMore";
-import BieChart from '../components/BieChart'
+import PieChart from '@/components/ECharts/PieChart'
 export default {
   components: {
     FormPreview,
     ButtonTab,
     ButtonTabItem,
     VScroll,
-    BieChart
+    PieChart
   },
   data() {
     return {

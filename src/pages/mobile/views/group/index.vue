@@ -6,17 +6,17 @@
         <cell title="创建人" :value="item.createuserid | uInfo"></cell>
         <cell title="备注" :value="item.remark"></cell>
         <cell title="创建时间" :value="item.createtime"></cell>
-        <flexbox class="group-btn" :gutter="1">
+        <flexbox class="group-btn">
           <template v-if="UID===item.createuserid">
-            <flexbox-item><x-button type="warn" @click.native="deleteById(item.id)">删除</x-button></flexbox-item>
-            <flexbox-item><x-button type="primary" @click.native="$router.push({name:'editGroup', query: { id:item.id } })">修改</x-button></flexbox-item>
+            <flexbox-item><x-button plain type="warn" @click.native="deleteById(item.id)">删除</x-button></flexbox-item>
+            <flexbox-item><x-button plain type="primary" @click.native="$router.push({name:'editGroup', query: { id:item.id } })">修改</x-button></flexbox-item>
           </template>
           <template v-else>
-            <flexbox-item v-if="ifBeyondGroup(item)"><x-button type="warn" @click="outById(UID,item.id)">退群</x-button></flexbox-item>
-            <flexbox-item><x-button type="primary" @click.native="joinGroup(item.id)" :disabled="ifBeyondGroup(item)">{{ifBeyondGroup(item)?'已加入':'加群'}}</x-button></flexbox-item>
+            <flexbox-item v-if="ifBeyondGroup(item)"><x-button plain type="warn" @click="outById(UID,item.id)">退群</x-button></flexbox-item>
+            <flexbox-item><x-button plain type="primary" @click.native="joinGroup(item.id)" :disabled="ifBeyondGroup(item)">{{ifBeyondGroup(item)?'已加入':'加群'}}</x-button></flexbox-item>
           </template>
           <template v-if="UID===item.createuserid || ifBeyondGroup(item)">
-            <flexbox-item><x-button type="primary" @click.native="showGroupMemners(item)">查看成员</x-button></flexbox-item>
+            <flexbox-item><x-button plain type="primary" @click.native="showGroupMemners(item)">查看成员</x-button></flexbox-item>
           </template>
         </flexbox>
       </group>
@@ -161,7 +161,8 @@ export default {
     border-top: 1px solid #dcdcdc;
     .weui-btn{
       font-size: .9em;
-      border-radius: 0
+      border-radius: 0;
+      border:none;
     }
   }
 }

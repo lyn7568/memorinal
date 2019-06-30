@@ -2,41 +2,35 @@
   <div class="main-con">
     <box gap="5px 0">
       <tab :line-width=2 v-model="curTab">
-        <tab-item class="vux-center" v-for="(item, index) in tabList" :key="index">{{item}}</tab-item>
+        <tab-item class="vux-center" v-for="item in tabList"
+         :key="item.index" @on-item-click="$router.push({name: item.path})">{{item.name}}</tab-item>
       </tab>
-      <box gap="15px" v-show="curTab===0">
-        <my-groups></my-groups>
-      </box>
-      <box v-show="curTab===1">
-        <personal-pay></personal-pay>
-      </box>
+      <router-view></router-view>
     </box>
-    <div v-if="curTab===1" class="add-group" @click="$router.push({name:'editOwnerPay'})">
-      <svg-icon icon-class="add" />
-    </div>
   </div>
 </template>
 
 <script>
-import { Tab, TabItem, Swiper, SwiperItem } from "vux";
-import userApi from "@/api/user";
-import { strToArr } from "@/utils";
-import MyGroups from './myGroups'
-import PersonalPay from './ownerPay/index'
+import { Tab, TabItem } from "vux";
 
 export default {
   components: {
     Tab,
-    TabItem,
-    Swiper,
-    SwiperItem,
-    MyGroups,
-    PersonalPay
+    TabItem
   },
   data() {
     return {
       curTab: 0,
-      tabList: ['群组缴费', '个人缴费']
+      tabList: [
+        {
+          name: '群组缴费',
+          path: 'myGroups'
+        },
+        {
+          name: '个人缴费',
+          path: 'ownerPay'
+        }
+      ]
     };
   }
 };

@@ -23,6 +23,10 @@ export default {
     },
     pieData: {
       type: Object
+    },
+    channel: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -57,6 +61,33 @@ export default {
   },
   methods: {
     setOptions(pieData) {
+      var setSeries = []
+      if (this.channel) {
+        setSeries = [{
+          name: '消费金额',
+          type: 'pie',
+          radius: [15, 95],
+          center: ['50%', '46%'],
+          data: pieData.sData
+        }]
+      } else {
+        setSeries = [{
+          name: '消费金额',
+          type: 'pie',
+          roseType: 'radius',
+          radius: [15, 95],
+          center: ['50%', '46%'],
+          data: pieData.sData,
+          itemStyle: {
+            normal: {
+              label: {
+                show: true,
+                formatter: '{b} ￥{c} ({d}%)'
+              }
+            }
+          }
+        }]
+      }
       this.chart.setOption({
         title: {
           text: pieData.topic + '：￥' + pieData.sum,
@@ -77,32 +108,7 @@ export default {
           bottom: '10',
           data: pieData.tit
         },
-        calculable: true,
-        series: [
-          {
-            name: '消费金额',
-            type: 'pie',
-            roseType: 'radius',
-            radius: [15, 95],
-            center: ['50%', '46%'],
-            data: pieData.sData,
-            animationEasing: 'cubicInOut',
-            animationDuration: 2600,
-            // label: {
-            //     normal: {
-            //         show: false
-            //     }
-            // },
-            itemStyle: {
-              normal: {
-                label: {
-                  show: true,
-                  formatter: '{b} : ￥{c} ({d}%)'
-                }
-              }
-            }
-          }
-        ]
+        series: setSeries
       })
     },
     initChart() {
