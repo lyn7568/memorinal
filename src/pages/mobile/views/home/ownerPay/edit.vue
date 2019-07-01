@@ -1,5 +1,5 @@
 <template>
-  <box gap="10px 0">
+  <box class="main-con">
     <group>
       <popup-picker title="缴费类型" show-name :data="[typeList()]" v-model="pojo.typeid" placeholder="请选择缴费类型" required></popup-picker>
       <datetime title="缴费日期" v-model="pojo.paytime" placeholder="请选择缴费日期"></datetime>

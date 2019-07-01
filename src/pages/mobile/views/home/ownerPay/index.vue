@@ -23,7 +23,7 @@
             :body-items="[
               {
                 label: '缴费类型',
-                value: item.typeid
+                value: item.typeName || item.typeid
               },
               {
                 label: '缴费日期',
@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import queryBase from '@/utils/queryBase'
 import { FormPreview, ButtonTab, ButtonTabItem } from "vux";
 import paymoneyApi from "@/api/paymoney";
 import { messageFun } from "@/utils/msg";
@@ -136,6 +137,15 @@ export default {
         if(response.flag && response.data) {
           const oj = response.data.rows
           if(oj.length > 0) {
+            for (let i = 0; i < oj.length; ++i) {
+            if (oj[i].typeid) {
+              queryBase.getType(oj[i].typeid, function(sc, value) {
+                if (sc) {
+                  oj[i].typeName = value.typename
+                }
+              })
+            }
+          }
             this.$nextTick(() => {
               this.pojo = this.pojo.concat(oj)
             })

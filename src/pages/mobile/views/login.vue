@@ -87,7 +87,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: -webkit-linear-gradient(#ae56e1, #6e84f1);
+  background: -webkit-linear-gradient(bottom right,#ae56e1,  #6e84f1,#6ef1ab);
   .log-body{
     margin: 8em 0;
     .log-tit{

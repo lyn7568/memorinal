@@ -1,6 +1,6 @@
 <template>
   <div class="mian-con">
-    <box gap="10px 0">
+    <box gap="60px 0 10px">
       <button-tab v-model="curTab">
         <button-tab-item>统计</button-tab-item>
         <button-tab-item>记录</button-tab-item>
@@ -14,7 +14,7 @@
         暂无缴费记录
       </div>
     </template>
-    <v-scroll v-if="curTab===1" :onLoadMore="onLoadMore" :dataList="scrollData" :topVal="'140'">
+    <v-scroll v-if="curTab===1" :onLoadMore="onLoadMore" :dataList="scrollData" :topVal="'110'">
       <div v-if="pojo && pojo.length">
         <div v-for="item in pojo" :key="item.index">
           <form-preview
@@ -23,15 +23,15 @@
             :body-items="[
               {
                 label: '缴费类型',
-                value: item.typeid
+                value: item.typeName || item.typeid
               },
               {
                 label: '缴费人',
-                value: item.payuserid
+                value: item.payUserName || item.payuserid
               },
               {
                 label: '平摊人',
-                value: item.shareuserid || ''
+                value: item.shareUserName || item.shareuserid
               },
               {
                 label: '平摊金额',
@@ -77,6 +77,8 @@
 </template>
 
 <script>
+import queryBase from '@/utils/queryBase'
+import { strToArr, arrToStr } from '@/utils'
 import { FormPreview, ButtonTab, ButtonTabItem } from "vux";
 import paymoneyApi from "@/api/paymoney";
 import { messageFun } from "@/utils/msg";
@@ -117,6 +119,9 @@ export default {
     };
   },
   computed: {
+    userList() {
+      return this.$store.getters.uListArrs 
+    },
     typeList() {
       return this.$store.getters.typeArrs
     },
@@ -142,8 +147,8 @@ export default {
         }, 10);
       }
     },
-    search() {
-      paymoneyApi.findSearch({
+    async search() {
+      let response = await paymoneyApi.findSearch({
         groupid: this.groupid,
         payuserid: this.searchPayuserid,
         typeid: this.searchTypeid,
@@ -151,20 +156,48 @@ export default {
         endTime: this.endTime,
         page: this.page,
         size: this.size
-      }).then( response => {
-        if(response.flag && response.data) {
-          const oj = response.data.rows
-          if(oj.length > 0) {
-            this.$nextTick(() => {
-              this.pojo = this.pojo.concat(oj)
-            })
-            if (oj.length < this.size) {
-              this.scrollData.noFlag = true
+      })
+      if(response.flag && response.data) {
+        const oj = response.data.rows
+        if(oj.length > 0) {
+          for (let i = 0; i < oj.length; ++i) {
+            if (oj[i].typeid) {
+              queryBase.getType(oj[i].typeid, function(sc, value) {
+                if (sc) {
+                  oj[i].typeName = value.typename
+                }
+              })
+            }
+            if (oj[i].payuserid) {
+              queryBase.getUser(oj[i].payuserid, function(sc, value) {
+                if (sc) {
+                  oj[i].payUserName = value.username
+                }
+              })
+            }
+            if (oj[i].shareuserid) {
+              var shareArr = strToArr(oj[i].shareuserid)
+              var shareName = this.userList.map((lk, index) => {
+                if (shareArr.indexOf(lk.id) > -1) {
+                  return lk.username
+                }
+              }).filter(item => {
+                if (item) {
+                  return item
+                }
+              })
+              oj[i].shareUserName = arrToStr(shareName)
             }
           }
+          this.$nextTick(() => {
+            this.pojo = this.pojo.concat(oj)
+          })
+          if (oj.length < this.size) {
+            this.scrollData.noFlag = true
+          }
         }
-        this.scrollData.loading = false
-      })
+      }
+      this.scrollData.loading = false
     },
     deleteById(id) {
       this.$vux.confirm.show({

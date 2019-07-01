@@ -97,7 +97,7 @@ export default {
             fontSize: 14
           },
           right: 10,
-          top: 0
+          top: 10
         },
         tooltip: {
           trigger: 'item',

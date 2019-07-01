@@ -1,21 +1,28 @@
 <template>
-  <box gap="10px 0">
+  <box class="main-con">
     <group>
       <x-input title="缴费人" :value="UName" text-align="right" readonly></x-input>
       <popup-picker title="缴费类型" show-name :data="typeList()?[typeList()]:[]" v-model="pojo.typeid" placeholder="请选择缴费类型" required></popup-picker>
       <datetime title="缴费日期" v-model="pojo.paytime" placeholder="请选择缴费日期"></datetime>
-      <x-input title="缴费金额" v-model="pojo.paycount" placeholder="请输入缴费金额" text-align="right" required></x-input>
+      <x-input title="缴费金额" v-model="pojo.paycount" placeholder="请输入缴费金额" text-align="right" required @on-change="changePtAllCostFun"></x-input>
     </group>
     <group>
-      <checklist
-        title="平摊人"
-        label-position="left"
-        :options="userListGroup"
-        v-model="ptUserArr"></checklist>
-                      <!-- :disabled="" -->
+      <group-title>平摊人</group-title>
+      <cell-box>
+        <checker
+        v-model="ptUserArr"
+        type="checkbox"
+        default-item-class="demo4-item"
+        selected-item-class="demo4-item-selected"
+        disabled-item-class="demo4-item-disabled" @on-change="changePtUserFun">
+          <checker-item v-for="item in userListGroup" :key="item.index"
+            :value="item.key"
+            :disabled="UID===item.key"> {{ item.value }} </checker-item>
+        </checker>
+      </cell-box>
     </group>
     <group>
-      <x-input title="平摊金额" v-model="pojo.paycount" placeholder="0.00" text-align="right" readonly></x-input>
+      <x-input title="平摊金额" v-model="pojo.sharemoney" placeholder="0.00" text-align="right" readonly></x-input>
     </group>
     <group>
       <x-input title="备注" v-model="pojo.remark" placeholder="请输入备注信息" text-align="right"></x-input>
@@ -28,7 +35,7 @@
 </template>
 
 <script>
-import { PopupPicker, Datetime, Checklist, Checker, CheckerItem } from "vux";
+import { PopupPicker, Datetime, Checker, CheckerItem, GroupTitle, CellBox } from "vux";
 import paymoneyApi from "@/api/paymoney"
 import groupApi from "@/api/group"
 import { messageFun } from '@/utils/msg'
@@ -39,7 +46,8 @@ export default {
     Datetime,
     Checker,
     CheckerItem,
-    Checklist
+    GroupTitle,
+    CellBox
   },
   data() {
     return {
@@ -92,6 +100,7 @@ export default {
       return false;
     },
     onSubmit() {
+      this.pojo.payuserid = this.UID
       this.pojo.typeid = arrToStr(this.pojo.typeid)
       this.pojo.groupid = this.groupid
       this.pojo.shareuserid = arrToStr(this.ptUserArr)
@@ -105,45 +114,64 @@ export default {
     findById() {
       paymoneyApi.findById(this.payid).then(response => {
         response.data.typeid = strToArr(response.data.typeid)
+        response.data.payuserid = strToArr(response.data.payuserid)
         this.$nextTick(() => {
           this.pojo = response.data
         })
       })
     },
     findAllUserById() {
-        groupApi.findAllUserById(this.groupid).then(response => {
-          var userArr = []
-          if (response.flag && response.data) {
-            response.data.map(item => {
-              userArr.push({
-                key: item.id,
-                value: item.username
-              })
+      groupApi.findAllUserById(this.groupid).then(response => {
+        var userArr = []
+        if (response.flag && response.data) {
+          response.data.map(item => {
+            userArr.push({
+              key: item.id,
+              value: item.username
             })
-          }
-          this.$nextTick(() => {
-            this.userListGroup = userArr
           })
-        })
+          this.ptUserArr.push(this.UID)
+          this.userListGroup = userArr
+        }
+      })
+    },
+    changePtAllCostFun(val) {
+        this.countPtpay()
+    },
+    changePtUserFun(val) {
+        this.countPtpay()
+    },
+    countPtpay() {
+      const len = this.ptUserArr.length
+      const paycount = this.pojo.paycount
+      if (paycount) {
+        if (len) {
+            this.pojo.sharemoney = Number(paycount) / len
+        } else {
+            this.pojo.sharemoney = paycount
+        }
+      }
     }
   }
 };
 </script>
 
 <style lang="scss">
-  .check-item{
-    height: 26px;
-    line-height: 26px;
-    text-align: center;
-    border-radius: 3px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    padding: 5px 15px;
-    margin-right: 5px;
-    margin-top:5px;
-  }
-  .check-item-selected{
-    border-color: #ff4a00;
-    border-width: 2px;
-  }
+.demo4-item {
+  background-color: #eee;
+  color: #222;
+  font-size: 14px;
+  padding: 5px 10px;
+  margin:5px;
+  line-height: 18px;
+  border-radius: 15px;
+}
+.demo4-item-selected {
+  background-color: rgba(0, 209, 146, 1);
+  color: #fff;
+}
+.demo4-item-disabled {
+  background-color: rgba(0, 209, 146, 0.7);
+  color: rgba(256,256,256,.8);
+}
 </style>

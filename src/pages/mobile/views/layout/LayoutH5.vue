@@ -19,6 +19,7 @@ export default {
   name: 'layoutH5',
   data() {
     return {
+      levelName: null,
       tabList: [
         {
           name: '首页',
@@ -43,14 +44,31 @@ export default {
       ]
     }
   },
+  watch: {
+    $route() {
+      this.metaTitle()
+    }
+  },
   created() {
-    console.log(this.$route)
+    this.metaTitle()
   },
   components: {
     ViewBox,
     XHeader,
     Tabbar,
     TabbarItem
+  },
+  methods: {
+    metaTitle() {
+      const groupName = sessionStorage.getItem('GROUPName')
+      let matched = this.$route.matched.filter(item => {
+        if (groupName && item.name === 'groupPay') {
+          item.meta.title = groupName
+        }
+        return item.name
+      })
+      this.levelName = matched
+    }
   }
 }
 </script>
@@ -81,29 +99,29 @@ export default {
       background: #ffffff;
       border-radius: 0;
     }
-    .add-group{
-      position: fixed;
-      bottom: 80px;
-      right: 15px;
-      z-index: 800;
-      border-radius: 50%;
-      background: #ffffff;
-      box-shadow: 1px 1px 10px #6e84f1;
-      opacity: .8;
-      &:hover{
-        opacity: 1;
-      }
-      .svg-icon{
-        font-size: 3em;
-        color: #6e84f1;
-      }
-    }
     .nodata {
       font-size: 13px;
       text-align: center;
       line-height: 24px;
       margin: 10em 0;
       color: #999;
+    }
+  }
+  .add-group{
+    position: fixed;
+    bottom: 80px;
+    right: 15px;
+    z-index: 800;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 1px 1px 10px #6e84f1;
+    opacity: .8;
+    &:hover{
+      opacity: 1;
+    }
+    .svg-icon{
+      font-size: 3em;
+      color: #6e84f1;
     }
   }
 }

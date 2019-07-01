@@ -10,6 +10,9 @@ import '@/utils/filter'
 import '@/icons'
 import './permission'
 
+const FastClick = require('fastclick')
+FastClick.attach(document.body)
+
 import { TransferDom, LoadingPlugin, ToastPlugin, ConfirmPlugin, Group, Box, XInput, XButton, Cell } from 'vux'
 Vue.directive('transfer-dom', TransferDom)
 Vue.use(LoadingPlugin)

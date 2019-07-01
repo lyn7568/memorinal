@@ -84,18 +84,7 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="缴费人" >
-                <el-select v-model="pojo.payuserid" placeholder="请选择">
-                    <!--v-for: 循环迭代 
-                        :label : 对应的数据里存放城市的属性名称,这里是name
-                        :value : 存放城市的id
-                        :key : 也是对应的id
-                    -->
-                    <el-option v-for="item in userListGroup" :key="item.id"
-                                :label="item.username" :value="item.id">
-                    </el-option>
-                </el-select>
-            </el-form-item>
+            <el-form-item label="缴费人" >{{UName}}</el-form-item>
             <el-form-item label="缴费日期" >
                 <el-date-picker
                     v-model="pojo.paytime"
@@ -112,7 +101,7 @@
                 <el-select v-model="ptUserArr" multiple placeholder="请选择"
                     @change="changePtUserFun">
                     <el-option v-for="item in userListGroup" :key="item.id"
-                                :label="item.username" :value="item.id">
+                                :label="item.username" :value="item.id" :disabled="item.id===UID">
                     </el-option>
                 </el-select>
             </el-form-item>
@@ -181,6 +170,9 @@ export default {
         UID() {
             return this.$store.getters.userid
         },
+        UName() {
+            return this.$store.getters.name
+        },
         roles() {
             return this.$store.getters.roles
         }
@@ -202,7 +194,10 @@ export default {
         },
         findAllUserById() {
             groupApi.findAllUserById(this.groupid).then(response => {
-                this.userListGroup = response.data;
+                if (response.flag && response.data) { 
+                    this.ptUserArr.push(this.UID)
+                    this.userListGroup =  response.data
+                }
             })
         },
         changePtAllCostFun(val) {
@@ -218,7 +213,7 @@ export default {
             if (this.ptUserArr.length) {
                 this.pojo.sharemoney = (Number(this.pojo.paycount) / this.ptUserArr.length).toFixed(2)
             } else {
-               this.pojo.sharemoney = ''
+               this.pojo.sharemoney = this.pojo.paycount
             }
         },
         fetchData() {
@@ -228,6 +223,8 @@ export default {
         },
         //保存新增活动
         saveOrUpdate() {
+            this.pojo.payuserid = this.UID
+            // this.pojo.typeid = arrToStr(this.pojo.typeid)
             this.pojo.groupid = this.groupid
             this.pojo.shareuserid = arrToStr(this.ptUserArr)
             paymoneyApi.saveOrUpdate(this.id,this.pojo).then( response => {

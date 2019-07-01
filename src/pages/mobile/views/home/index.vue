@@ -23,15 +23,22 @@ export default {
       curTab: 0,
       tabList: [
         {
+          tab: 0,
           name: '群组缴费',
           path: 'myGroups'
         },
         {
+          tab: 1,
           name: '个人缴费',
           path: 'ownerPay'
         }
       ]
     };
+  },
+  created() {
+    if (this.$route.name === 'ownerPay') {
+      this.curTab = 1
+    }
   }
 };
 </script>
