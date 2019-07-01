@@ -142,15 +142,11 @@ export default {
         this.countPtpay()
     },
     countPtpay() {
-      const len = this.ptUserArr.length
-      const paycount = this.pojo.paycount
-      if (paycount) {
-        if (len) {
-            this.pojo.sharemoney = Number(paycount) / len
-        } else {
-            this.pojo.sharemoney = paycount
-        }
+      this.pojo.sharemoney = this.pojo.paycount
+      if (this.ptUserArr.length > 1) {
+        this.pojo.sharemoney = Number(this.pojo.paycount) / this.ptUserArr.length
       }
+      this.$forceUpdate()
     }
   }
 };

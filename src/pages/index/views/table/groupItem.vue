@@ -95,7 +95,7 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="缴费金额" >
-                <el-input v-model="pojo.paycount" auto-complete="off" @change="changePtAllCostFun"></el-input>
+                <el-input v-model="pojo.paycount" @change="changePtAllCostFun"></el-input>
             </el-form-item>
             <el-form-item label="平摊人" >
                 <el-select v-model="ptUserArr" multiple placeholder="请选择"
@@ -201,7 +201,6 @@ export default {
             })
         },
         changePtAllCostFun(val) {
-            console.log(val)
             this.pojo.paycount = val
             this.countPtpay()
         },
@@ -210,11 +209,11 @@ export default {
             this.countPtpay()
         },
         countPtpay() {
-            if (this.ptUserArr.length) {
+            this.pojo.sharemoney = this.pojo.paycount
+            if (this.ptUserArr.length > 1) {
                 this.pojo.sharemoney = (Number(this.pojo.paycount) / this.ptUserArr.length).toFixed(2)
-            } else {
-               this.pojo.sharemoney = this.pojo.paycount
             }
+            this.$forceUpdate()
         },
         fetchData() {
             paymoneyApi.getList().then(response => {
