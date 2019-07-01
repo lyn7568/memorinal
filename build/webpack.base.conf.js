@@ -20,7 +20,7 @@ const createLintingRule = () => ({
   }
 })
 
-const originalConfig = {
+const webpackConfig = {
   context: path.resolve(__dirname, '../'),
   entry: utils.entries(),
   // {
@@ -33,8 +33,11 @@ const originalConfig = {
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
+  // plugins: [{
+  //   name: 'duplicate-style'
+  // }],
   resolve: {
-    extensions: ['.js', '.vue', '.json'],
+    extensions: ['.js', '.vue', '.json', '.less'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
@@ -102,6 +105,6 @@ const originalConfig = {
   }
 }
 
-module.exports = vuxLoader.merge(originalConfig, {
+module.exports = vuxLoader.merge(webpackConfig, {
   plugins: ['vux-ui']
 })
