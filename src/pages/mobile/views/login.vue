@@ -7,7 +7,7 @@
             <span class="svg-container">
               <svg-icon icon-class="user" />
             </span>
-            <x-input title="账" type="text" v-model="loginForm.username" placeholder="请输入您的账号" is-type="china-mobile" required></x-input>
+            <x-input title="账" type="text" v-model="loginForm.username" placeholder="请输入您的账号" required></x-input>
           </div>
           <div class="log-item">
             <span class="svg-container">

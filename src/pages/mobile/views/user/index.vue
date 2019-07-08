@@ -1,22 +1,28 @@
 <template>
   <div class="main-con">
     <v-scroll :onLoadMore="onLoadMore" :dataList="scrollData" :topVal="'46'">
-      <group-title v-if="roles.indexOf('1')>-1">试试向左滑动，可以编辑该类型</group-title>
+      <group-title v-if="roles.indexOf('1')>-1">试试向左滑动，可以编辑该用户</group-title>
       <div class="vux-1px-t">
         <swipeout class="vux-1px-tb">
           <swipeout-item v-for="item in list" :key="item.index" :disabled="roles.indexOf('0')>-1">
             <div slot="right-menu">
-              <swipeout-button @click.native="$router.push({name:'editType', query: { id:item.id } })" background-color="#09BB07">编辑</swipeout-button>
+              <swipeout-button @click.native="resetById(item.id)" background-color="#e6a23c">重置密码</swipeout-button>
+              <swipeout-button @click.native="$router.push({name:'editUser', query: { id:item.id } })" background-color="#09BB07">编辑</swipeout-button>
               <swipeout-button @click.native="deleteById(item.id)" background-color="#D23934">删除</swipeout-button>
             </div>
             <div slot="content" class="demo-content vux-1px-tb">
-              <cell :title="item.typename" :value="item.createtime" :inline-desc="item.remark"></cell>
+              <cell :title="item.username+'-'+item.sex+'-'+item.addr" :inline-desc="item.telno">
+                <div>
+                  <span>{{item.remark}}</span><br/>
+                  <span>{{item.createtime}}</span>
+                </div>
+              </cell>
             </div>
           </swipeout-item>
         </swipeout>
       </div>
     </v-scroll>
-    <div class="add-group" @click="$router.push({name:'editType'})">
+    <div class="add-group" @click="$router.push({name:'editUser'})">
       <svg-icon icon-class="add" />
     </div>
   </div>
@@ -24,7 +30,7 @@
 
 <script>
 import { GroupTitle, Swipeout, SwipeoutItem, SwipeoutButton, Badge } from 'vux'
-import typeApi from "@/api/type"
+import userApi from "@/api/user"
 import VScroll from "@/components/ScrollMore";
 import { messageFun } from '@/utils/msg'
 export default {
@@ -68,7 +74,7 @@ export default {
     },
     search() {
       this.$vux.loading.show()
-      typeApi.search(this.page,this.size).then( response => {
+      userApi.search(this.page,this.size).then( response => {
         setTimeout(() => {
           this.$vux.loading.hide()
         }, 1000)
@@ -95,13 +101,24 @@ export default {
         title: '提示',
         content: '确定要删除吗?',
         onConfirm : () => {
-          typeApi.deleteById(id).then(response => {
+          userApi.deleteById(id).then(response => {
             messageFun(response)
             if (response.flag) {
               this.search();
-              this.$store.dispatch('getDictType')
+              this.$store.dispatch('getDictuList')
             }
           })
+        }
+      })
+    },
+    resetById(id) {
+      this.$vux.confirm.show({
+        title: '提示',
+        content: '确定要重置该用户密码?',
+        onConfirm : () => {
+          userApi.resetById(id).then( response => {
+            messageFun(response)
+          })  
         }
       })
     }

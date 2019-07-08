@@ -155,15 +155,3 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.main-con{
-  .group-btn{
-    border-top: 1px solid #dcdcdc;
-    .weui-btn{
-      font-size: .9em;
-      border-radius: 0;
-      border:none;
-    }
-  }
-}
-</style>

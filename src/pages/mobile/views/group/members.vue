@@ -9,9 +9,9 @@
               <swipeout-button @click.native="outById(item.id)" background-color="#D23934">移除</swipeout-button>
             </div>
             <div slot="content" class="demo-content vux-1px-tb">
-              <cell :title="item.username" :value="item.telno" :inline-desc="item.addr+' - '+item.remark">
+              <cell :title="item.username+'-'+item.sex+'-'+item.addr" :value="item.remark" :inline-desc="item.telno">
                 <div class="badge-value" v-if="item.id===createuserid">
-                  <span class="vertical-middle">{{item.telno}}</span><br/>
+                  <span class="vertical-middle">{{item.remark}}</span><br/>
                   <badge text="群主"></badge>
                 </div>
               </cell>
@@ -20,7 +20,7 @@
         </swipeout>
       </div>
     </group>
-    <group-title v-if="UID===createuserid">试试向右滑动，可以移除该成员</group-title>
+    <group-title v-if="UID===createuserid">试试向左滑动，可以移除该成员</group-title>
   </div>
 </template>
 <script>

@@ -25,11 +25,20 @@ export const constantRouterMap = [
   { path: '/login', component: resolve => require(['../views/login'], resolve), hidden: true },
   // { path: '/404', component: resolve => require(['../views/404'], resolve), hidden: true },
   // { path: '/401', component: resolve => require(['../views/401'], resolve), hidden: true },
-
   {
     path: '/',
     component: LayoutH5,
-    redirect: '/home',
+    redirect: '/dashboard',
+    name: 'Dashboard',
+    hidden: true,
+    children: [{
+      path: 'dashboard',
+      component: resolve => require(['../views/dashboard/index'], resolve)
+    }]
+  },
+  {
+    path: '',
+    component: LayoutH5,
     children: [
       {
         path: '/home',
@@ -99,12 +108,20 @@ export const constantRouterMap = [
   {
     path: '',
     component: LayoutH5,
-    children: [{
-      path: '/type',
-      name: 'type',
-      component: resolve => require(['../views/type/index'], resolve),
-      meta: { active: 'type', title: '缴费类型' }
-    }]
+    children: [
+      {
+        path: '/type',
+        name: 'type',
+        component: resolve => require(['../views/type/index'], resolve),
+        meta: { active: 'type', title: '缴费类型' }
+      },
+      {
+        path: '/type/edit',
+        name: 'editType',
+        component: resolve => require(['../views/type/edit'], resolve),
+        meta: { active: 'type', title: '编辑类型' }
+      }
+    ]
   },
   {
     path: '',
@@ -129,58 +146,25 @@ export const constantRouterMap = [
         meta: { active: 'mine', title: '修改密码' }
       }
     ]
+  },
+  {
+    path: '',
+    component: LayoutH5,
+    children: [
+      {
+        path: '/user',
+        name: 'user',
+        component: resolve => require(['../views/user/index'], resolve),
+        meta: { active: 'user', title: '缴费用户' }
+      },
+      {
+        path: '/user/edit',
+        name: 'editUser',
+        component: resolve => require(['../views/user/edit'], resolve),
+        meta: { active: 'user', title: '编辑用户' }
+      }
+    ]
   }
-  // {
-  //   path: '/paymoney',
-  //   component: Layout,
-  //   // alwaysShow: true,
-  //   meta: { title: '缴费详情', icon: 'table' },
-  //   children: [
-  //     {
-  //       path: 'groupPay',
-  //       name: 'groupPay',
-  //       component: resolve => require(['../views/table/groupPay'], resolve),
-  //       meta: { title: '群组缴费' }
-  //     },
-  //     {
-  //       path: 'groupItem',
-  //       name: 'groupItem',
-  //       hidden: true,
-  //       component: resolve => require(['../views/table/groupItem'], resolve),
-  //       meta: { title: '群组名称' }
-  //     },
-  //     {
-  //       path: 'ownerPay',
-  //       name: 'ownerPay',
-  //       component: resolve => require(['../views/table/ownerPay'], resolve),
-  //       meta: { title: '个人缴费' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/group',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       name: 'group',
-  //       component: resolve => require(['../views/table/group'], resolve),
-  //       meta: { title: '缴费群组', icon: 'group' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/type',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       name: 'Type',
-  //       component: resolve => require(['../views/table/type'], resolve),
-  //       meta: { title: '缴费类型', icon: 'form' }
-  //     }
-  //   ]
-  // }
 ]
 
 export default new Router({
@@ -190,44 +174,5 @@ export default new Router({
 })
 
 export const asyncRouterMap = [
-  // {
-  //   path: '/user',
-  //   component: Layout,
-  //   meta: {
-  //     roles: ['1']
-  //   },
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       name: 'User',
-  //       component: resolve => require(['../views/table/user'], resolve),
-  //       meta: { title: '缴费用户', icon: 'peoples' }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/personal',
-  //   component: Layout,
-  //   alwaysShow: true,
-  //   meta: {
-  //     title: '个人中心',
-  //     icon: 'user',
-  //     roles: ['0']
-  //   },
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       name: 'update',
-  //       component: resolve => require(['../views/personal/update'], resolve),
-  //       meta: { title: '修改资料' }
-  //     },
-  //     {
-  //       path: 'pwd',
-  //       name: 'changePwd',
-  //       component: resolve => require(['../views/personal/changePwd'], resolve),
-  //       meta: { title: '修改密码' }
-  //     }
-  //   ]
-  // },
   // { path: '*', redirect: '/404', hidden: true }
 ]

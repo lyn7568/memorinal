@@ -1,10 +1,12 @@
 <template>
   <div class="lyout-show">
     <view-box ref="viewBox">
-      <x-header slot="header" :left-options="{backText: ''}" class="lay-header">{{$route.meta.title}}</x-header>
+      <x-header slot="header" :left-options="{backText: ''}" class="lay-header">{{$route.meta.title}}
+        <a slot="right" @click="logout" v-if="roles.indexOf('1')>-1">退出登录</a>
+      </x-header>
       <router-view></router-view>
       <tabbar slot="bottom">
-        <tabbar-item v-for="tab in tabList" :key="tab.index" :selected="$route.path && $route.meta.active===tab.rname" :link="{name: tab.rname}">
+        <tabbar-item v-for="tab in roles.indexOf('1')>-1?tabListAdmin:tabList" :key="tab.index" :selected="$route.path && $route.meta.active===tab.rname" :link="{name: tab.rname}">
           <svg-icon slot="icon" :icon-class="tab.icon" />
           <span slot="label">{{tab.name}}</span>
         </tabbar-item>
@@ -41,7 +43,24 @@ export default {
           icon: 'user',
           rname: 'mine'
         }
+      ],
+      tabListAdmin: [
+        {
+          name: '用户',
+          icon: 'user',
+          rname: 'user'
+        },
+        {
+          name: '类型',
+          icon: 'form',
+          rname: 'type'
+        }
       ]
+    }
+  },
+  computed: {
+    roles() {
+      return this.$store.getters.roles
     }
   },
   watch: {
@@ -68,6 +87,11 @@ export default {
         return item.name
       })
       this.levelName = matched
+    },
+    logout() {
+      this.$store.dispatch('FedLogOut').then(() => {
+        location.reload()
+      })
     }
   }
 }
@@ -133,5 +157,15 @@ export default {
 .chart-wrapper{
   margin: 2em 0;
   background: #ffffff;
+}
+.main-con{
+  .group-btn{
+    border-top: 1px solid #dcdcdc;
+    .weui-btn{
+      font-size: .9em;
+      border-radius: 0;
+      border:none;
+    }
+  }
 }
 </style>
