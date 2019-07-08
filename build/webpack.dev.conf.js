@@ -50,14 +50,14 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new webpack.NamedModulesPlugin(), // HMR shows correct file names in console on update.
     new webpack.NoEmitOnErrorsPlugin(),
     // https://github.com/ampedandwired/html-webpack-plugin
-    // new HtmlWebpackPlugin({
-    //   filename: 'index.html',
-    //   template: 'index.html',
-    //   inject: true,
-    //   favicon: resolve('favicon.ico'),
-    //   title: 'vue-element-admin'
-    // }),
-  ].concat(utils.htmlPlugin())
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'index.html',
+      inject: true,
+      favicon: resolve('favicon.ico'),
+      title: 'vue-element-admin'
+    }),
+  ]
 })
 
 module.exports = new Promise((resolve, reject) => {

@@ -3,7 +3,6 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
-const vuxLoader = require('vux-loader')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -20,12 +19,11 @@ const createLintingRule = () => ({
   }
 })
 
-const webpackConfig = {
+module.exports =  {
   context: path.resolve(__dirname, '../'),
-  entry: utils.entries(),
-  // {
-  //   app: ['babel-polyfill', './src/main.js']
-  // },
+  entry: {
+    app: ['babel-polyfill', './src/main.js']
+  },
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
@@ -33,11 +31,8 @@ const webpackConfig = {
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
-  // plugins: [{
-  //   name: 'duplicate-style'
-  // }],
   resolve: {
-    extensions: ['.js', '.vue', '.json', '.less'],
+    extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
@@ -104,7 +99,3 @@ const webpackConfig = {
     child_process: 'empty'
   }
 }
-
-module.exports = vuxLoader.merge(webpackConfig, {
-  plugins: ['vux-ui']
-})
